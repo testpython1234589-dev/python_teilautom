@@ -9,46 +9,74 @@ VORLAGEN_DIR = BASE_DIR
 OUTPUT_DIR = BASE_DIR / "Output_wordvorlage"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
+
+# -----------------------------
+# Helpers
+# -----------------------------
 def safe_filename(s: str) -> str:
     return "".join(c for c in (s or "").strip() if c.isalnum() or c in ("-", "_"))
 
+
 def euro_to_float(t: str) -> float:
+    """
+    Akzeptiert z.B.:
+    '1000' | '1000,5' | '1000.50' | '1.000,50' | '€ 1 000,50' | ''
+    Rückgabe: Euro als float ('' -> 0.0)
+    """
     s = (t or "").strip()
     if not s:
         return 0.0
+
     s = s.replace("€", "").replace("EUR", "").strip()
     s = s.replace(" ", "")
+
+    # Wenn sowohl '.' als auch ',' vorkommen -> '.' Tausender, ',' Dezimal
     if "." in s and "," in s:
         s = s.replace(".", "").replace(",", ".")
     elif "," in s:
         s = s.replace(",", ".")
+
     return float(s)
 
+
 def euro_format(value: float) -> str:
+    # 1234.5 -> '1.234,50'
     return f"{value:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
-# Fristdatum
+
+# Datum/Frist (14 Tage)
 first_datum_14_zukunft = datetime.now() + timedelta(days=14)
 
+
+# -----------------------------
+# Context builder (Standard)
+# -----------------------------
 def standardabfrage(data: dict) -> dict:
     datum = date.today().strftime("%d.%m.%Y")
     return {
         "MANDANT_NACHNAME": data.get("MANDANT_NACHNAME", ""),
         "MANDANT_VORNAME": data.get("MANDANT_VORNAME", ""),
-        "MANDANT_PLZ_ORT": data.get("MANDANT_PLZ_ORT", ""),
-        "AKTENZEICHEN": data.get("AKTENZEICHEN", ""),  # als String safer
-        "HEUTDATUM": datum,
-        "FIRST_DATUM": first_datum_14_zukunft.strftime("%d.%m.%Y"),
-        "SCHADENHERGANG": data.get("SCHADENHERGANG", ""),
         "UNFALLE_STRASSE": data.get("UNFALLE_STRASSE", ""),
+        "MANDANT_PLZ_ORT": data.get("MANDANT_PLZ_ORT", ""),
+        "UNFALL_DATUM": data.get("UNFALL_DATUM", ""),
+        "AKTENZEICHEN": data.get("AKTENZEICHEN", ""),  # besser String
         "FAHRZEUGTYP": data.get("FAHRZEUGTYP", ""),
         "KENNZEICHEN": data.get("KENNZEICHEN", ""),
         "VORSTEUERBERECHTIGUNG": data.get("VORSTEUERBERECHTIGUNG", ""),
-        "UNFALL_DATUM": data.get("UNFALL_DATUM", ""),
-        # optional: wenn du das später brauchst
+        "SCHADENHERGANG": data.get("SCHADENHERGANG", ""),
         "SCHADENSNUMMER": data.get("SCHADENSNUMMER", ""),
+
+        "HEUTDATUM": datum,
+
+        # Achtung: In deinen Vorlagen evtl. FRIST_DATUM statt FIRST_DATUM.
+        # Passe den Key an deine echten Platzhalter an, falls nötig.
+        "FIRST_DATUM": first_datum_14_zukunft.strftime("%d.%m.%Y"),
     }
 
+
+# -----------------------------
+# Save renderer
+# -----------------------------
 def save_word_bezeichg(tpl_name: str, context_standard: dict, out_prefix: str) -> Path:
     tpl_path = VORLAGEN_DIR / tpl_name
     if not tpl_path.exists():
@@ -63,12 +91,13 @@ def save_word_bezeichg(tpl_name: str, context_standard: dict, out_prefix: str) -
     nachname = safe_filename(context_standard.get("MANDANT_NACHNAME", "Unbekannt"))
     out_name = f"{out_prefix}_{nachname}_{datetime.now().strftime('%Y%m%d_%H%M')}.docx"
     out_path = OUTPUT_DIR / out_name
-
     tpl.save(str(out_path))
     return out_path
 
-# ---------------- Vorlagen-Funktionen ----------------
 
+# -----------------------------
+# Vorlagen-Funktionen
+# -----------------------------
 def vorlage_schreiben(data: dict) -> Path:
     context_standard = standardabfrage(data)
 
@@ -85,11 +114,11 @@ def vorlage_schreiben(data: dict) -> Path:
     )
 
     context_standard.update({
-        "KOSTENSUMME_X": euro_format(kostensumme),
         "WERTMINDERUNG": wert_minderung,
         "REPARATURKOSTEN": reparatur_kosten,
         "KOSTENPAUSCHALE": kosten_pauschale,
         "SACHVERST_KOSTEN": sachverst_kosten,
+        "KOSTENSUMME_X": euro_format(kostensumme),
     })
 
     return save_word_bezeichg("vorlage_schreiben-1.docx", context_standard, "Standard_schreiben")
@@ -225,8 +254,7 @@ def vorlage_totalschaden_fiktiv(data: dict) -> Path:
 def vorlage_schreibentotalschaden(data: dict) -> Path:
     context_standard = standardabfrage(data)
 
-    # Diese Vorlage ist bei dir ein “Schreiben” mit einer zentralen Summe.
-    # Häufiger Platzhalter-Name: WIEDERBESCHAFFUNGSWERTAUFWAND
+    # In deiner Vorlage dürfte es so ähnlich heißen; falls nicht: Key anpassen!
     wbau_txt = data.get("WIEDERBESCHAFFUNGSWERTAUFWAND", "")
 
     context_standard.update({
