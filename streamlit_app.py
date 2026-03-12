@@ -11,6 +11,176 @@ with st.expander("📁 .docx Vorlagen im Repo anzeigen", expanded=False):
 
 tab_form, tab_json = st.tabs(["🧾 Formular", "🤖 JSON/ChatGPT einfügen"])
 
+PROMPTS = {
+    "Standard Schreiben": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown, keine Codeblöcke.
+Keys exakt so lassen. Unbekannte Werte als "".
+Beträge als "1.234,56" oder "1234,56".
+WICHTIG: VORSTEUERBERECHTIGUNG: bei JA -> "" (leer), bei NEIN -> "nicht".
+WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
+
+{
+  "TEMPLATE": "standard",
+  "MANDANT_NACHNAME": "",
+  "MANDANT_VORNAME": "",
+  "UNFALLE_STRASSE": "",
+  "MANDANT_PLZ_ORT": "",
+  "UNFALL_DATUM": "",
+  "UNFALL_ORT": "",
+  "UNFALL_STRASSE": "",
+  "AKTENZEICHEN": "",
+  "FAHRZEUGTYP": "",
+  "KENNZEICHEN": "",
+  "VORSTEUERBERECHTIGUNG": "",
+  "SCHADENHERGANG": "",
+  "SCHADENSNUMMER": "",
+  "WERTMINDERUNG": "",
+  "REPARATURKOSTEN": "",
+  "KOSTENPAUSCHALE": "",
+  "SACHVERST_KOSTEN": ""
+}
+""",
+    "130 Prozent": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown, keine Codeblöcke.
+Keys exakt so lassen. Unbekannte Werte als "".
+Beträge als "1.234,56" oder "1234,56".
+WICHTIG: VORSTEUERBERECHTIGUNG: bei JA -> "" (leer), bei NEIN -> "nicht".
+WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
+
+{
+  "TEMPLATE": "130",
+  "MANDANT_NACHNAME": "",
+  "MANDANT_VORNAME": "",
+  "UNFALLE_STRASSE": "",
+  "MANDANT_PLZ_ORT": "",
+  "UNFALL_DATUM": "",
+  "UNFALL_ORT": "",
+  "UNFALL_STRASSE": "",
+  "AKTENZEICHEN": "",
+  "FAHRZEUGTYP": "",
+  "KENNZEICHEN": "",
+  "VORSTEUERBERECHTIGUNG": "",
+  "SCHADENHERGANG": "",
+  "SCHADENSNUMMER": "",
+  "REPARATURKOSTEN": "",
+  "MWST_BETRAG": "",
+  "NUTZUNGSAUSFALL": "",
+  "WIEDERBESCHAFFUNGSWERT": "",
+  "RESTWERT": "",
+  "ZUSATZKOSTEN_BEZEICHNUNG": "",
+  "ZUSATZKOSTEN_BETRAG": ""
+}
+""",
+    "Totalschaden (konkret)": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown, keine Codeblöcke.
+Keys exakt so lassen. Unbekannte Werte als "".
+Beträge als "1.234,56" oder "1234,56".
+WICHTIG: VORSTEUERBERECHTIGUNG: bei JA -> "" (leer), bei NEIN -> "nicht".
+WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
+
+{
+  "TEMPLATE": "ts_konkret",
+  "MANDANT_NACHNAME": "",
+  "MANDANT_VORNAME": "",
+  "UNFALLE_STRASSE": "",
+  "MANDANT_PLZ_ORT": "",
+  "UNFALL_DATUM": "",
+  "UNFALL_ORT": "",
+  "UNFALL_STRASSE": "",
+  "AKTENZEICHEN": "",
+  "FAHRZEUGTYP": "",
+  "KENNZEICHEN": "",
+  "VORSTEUERBERECHTIGUNG": "",
+  "SCHADENHERGANG": "",
+  "SCHADENSNUMMER": "",
+  "WIEDERBESCHAFFUNGSWERT": "",
+  "WIEDERBESCHAFFUNGSAUFWAND": "",
+  "RESTWERT": "",
+  "ERSATZBESCHAFFUNG_MWST": "",
+  "ZUSATZKOSTEN_BEZEICHNUNG": "",
+  "ZUSATZKOSTEN_BETRAG": ""
+}
+""",
+    "Konkret unter WBW": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown, keine Codeblöcke.
+Keys exakt so lassen. Unbekannte Werte als "".
+Beträge als "1.234,56" oder "1234,56".
+WICHTIG: VORSTEUERBERECHTIGUNG: bei JA -> "" (leer), bei NEIN -> "nicht".
+WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
+
+{
+  "TEMPLATE": "konkret_unter_wbw",
+  "MANDANT_NACHNAME": "",
+  "MANDANT_VORNAME": "",
+  "UNFALLE_STRASSE": "",
+  "MANDANT_PLZ_ORT": "",
+  "UNFALL_DATUM": "",
+  "UNFALL_ORT": "",
+  "UNFALL_STRASSE": "",
+  "AKTENZEICHEN": "",
+  "FAHRZEUGTYP": "",
+  "KENNZEICHEN": "",
+  "VORSTEUERBERECHTIGUNG": "",
+  "SCHADENHERGANG": "",
+  "SCHADENSNUMMER": "",
+  "REPARATURKOSTEN": "",
+  "MWST_BETRAG": "",
+  "WERTMINDERUNG": "",
+  "NUTZUNGSAUSFALL": "",
+  "ZUSATZKOSTEN_BEZEICHNUNG": "",
+  "ZUSATZKOSTEN_BETRAG": ""
+}
+""",
+    "Totalschaden (fiktiv)": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown, keine Codeblöcke.
+Keys exakt so lassen. Unbekannte Werte als "".
+Beträge als "1.234,56" oder "1234,56".
+WICHTIG: VORSTEUERBERECHTIGUNG: bei JA -> "" (leer), bei NEIN -> "nicht".
+WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
+
+{
+  "TEMPLATE": "ts_fiktiv",
+  "MANDANT_NACHNAME": "",
+  "MANDANT_VORNAME": "",
+  "UNFALLE_STRASSE": "",
+  "MANDANT_PLZ_ORT": "",
+  "UNFALL_DATUM": "",
+  "UNFALL_ORT": "",
+  "UNFALL_STRASSE": "",
+  "AKTENZEICHEN": "",
+  "FAHRZEUGTYP": "",
+  "KENNZEICHEN": "",
+  "VORSTEUERBERECHTIGUNG": "",
+  "SCHADENHERGANG": "",
+  "SCHADENSNUMMER": "",
+  "WIEDERBESCHAFFUNGSWERT": "",
+  "WIEDERBESCHAFFUNGSAUFWAND": "",
+  "NUTZUNGSAUSFALL": "",
+  "RESTWERT": "",
+  "ZUSATZKOSTEN_BEZEICHNUNG": "",
+  "ZUSATZKOSTEN_BETRAG": ""
+}
+""",
+    "Schreiben Totalschaden": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown, keine Codeblöcke.
+Keys exakt so lassen. Unbekannte Werte als "".
+Beträge als "1.234,56" oder "1234,56".
+WICHTIG: VORSTEUERBERECHTIGUNG: bei JA -> "" (leer), bei NEIN -> "nicht".
+WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
+
+{
+  "TEMPLATE": "schreibentotalschaden",
+  "MANDANT_NACHNAME": "",
+  "MANDANT_VORNAME": "",
+  "UNFALLE_STRASSE": "",
+  "MANDANT_PLZ_ORT": "",
+  "UNFALL_DATUM": "",
+  "UNFALL_ORT": "",
+  "UNFALL_STRASSE": "",
+  "AKTENZEICHEN": "",
+  "FAHRZEUGTYP": "",
+  "KENNZEICHEN": "",
+  "VORSTEUERBERECHTIGUNG": "",
+  "SCHADENHERGANG": "",
+  "SCHADENSNUMMER": "",
+  "WIEDERBESCHAFFUNGSWERTAUFWAND": ""
+}
+"""
+}
 
 # -----------------------------
 # TAB 1: Formular
@@ -44,12 +214,19 @@ with tab_form:
         KENNZEICHEN = st.text_input("Kennzeichen")
         VORSTEUERBERECHTIGUNG = st.text_input("Vorsteuerberechtigt (JA/NEIN)")
 
-    # NEU: Unfallort + Unfallstraße
     u1, u2 = st.columns(2)
     with u1:
         UNFALL_ORT = st.text_input("Unfallort (Stadt/Ort)")
     with u2:
         UNFALL_STRASSE = st.text_input("Unfallstraße (Straße/Hausnr.)")
+
+    v1, v2, v3 = st.columns(3)
+    with v1:
+        VERSICHERUNG = st.text_input("Versicherung")
+    with v2:
+        VER_STRASSE = st.text_input("Versicherung Straße")
+    with v3:
+        VER_ORT = st.text_input("Versicherung PLZ/Ort")
 
     SCHADENHERGANG = st.text_area("Schadenshergang", height=110)
     SCHADENSNUMMER = st.text_input("Schadensnummer (optional)")
@@ -66,14 +243,14 @@ with tab_form:
         "VORSTEUERBERECHTIGUNG": VORSTEUERBERECHTIGUNG,
         "SCHADENHERGANG": SCHADENHERGANG,
         "SCHADENSNUMMER": SCHADENSNUMMER,
-
-        # NEU:
         "UNFALL_ORT": UNFALL_ORT,
         "UNFALL_STRASSE": UNFALL_STRASSE,
+        "VERSICHERUNG": VERSICHERUNG,
+        "VER_STRASSE": VER_STRASSE,
+        "VER_ORT": VER_ORT,
     }
 
     st.subheader("Vorlagen-spezifische Angaben")
-
     if template_choice == "standard":
         a, b, c, d = st.columns(4)
         with a:
@@ -135,13 +312,9 @@ with tab_form:
             data["ZUSATZKOSTEN_BETRAG"] = st.text_input("Zusatzkosten Betrag (optional)")
 
     elif template_choice == "schreibentotalschaden":
-        data["WIEDERBESCHAFFUNGSWERTAUFWAND"] = st.text_input(
-            "Wiederbeschaffungswertaufwand",
-            placeholder="z.B. 4.321,00"
-        )
+        data["WIEDERBESCHAFFUNGSWERTAUFWAND"] = st.text_input("Wiederbeschaffungswertaufwand")
 
     st.divider()
-
     if st.button("✅ Word-Datei erzeugen (Formular)", type="primary"):
         try:
             if template_choice == "standard":
@@ -168,55 +341,36 @@ with tab_form:
                     file_name=out_path.name,
                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 )
-            st.caption(f"Gespeichert in: {wb.OUTPUT_DIR}")
-
         except Exception as e:
             st.error(f"Fehler: {e}")
 
-
 # -----------------------------
-# TAB 2: JSON/ChatGPT einfügen
+# TAB 2: JSON/ChatGPT einfügen (Versicherung separat!)
 # -----------------------------
 with tab_json:
-    st.subheader("JSON aus ChatGPT einfügen (ein Feld, alles automatisch)")
+    st.subheader("JSON aus ChatGPT einfügen (ein Feld) + Versicherung separat")
 
-    st.caption(
-        "Erwartet JSON mit einem Feld TEMPLATE, z.B. TEMPLATE='standard' oder '130' usw. "
-        "Der Rest sind deine Variablenkeys."
-    )
+    st.markdown("### 1) Prompt auswählen & kopieren")
+    prompt_name = st.selectbox("Prompt wählen", list(PROMPTS.keys()))
+    st.code(PROMPTS[prompt_name], language="text")
 
-    example = {
-        "TEMPLATE": "standard",
-        "MANDANT_NACHNAME": "Huss",
-        "MANDANT_VORNAME": "Roondf",
-        "UNFALLE_STRASSE": "An der Magistrale 59",
-        "MANDANT_PLZ_ORT": "0283 Hlef",
-        "UNFALL_DATUM": "01.02.2023",
-        "AKTENZEICHEN": "1342",
-        "FAHRZEUGTYP": "VW Golf",
-        "KENNZEICHEN": "HAL 2428F",
-        "VORSTEUERBERECHTIGUNG": "JA",
-        "UNFALL_ORT": "Halle (Saale)",
-        "UNFALL_STRASSE": "Musterstraße 12",
-        "SCHADENHERGANG": "Hergang...",
-        "WERTMINDERUNG": "1000",
-        "REPARATURKOSTEN": "1000",
-        "KOSTENPAUSCHALE": "199",
-        "SACHVERST_KOSTEN": "17",
-        "SCHADENSNUMMER": ""
-    }
+    st.markdown("### 2) JSON von ChatGPT hier einfügen")
+    json_text = st.text_area("JSON", height=260)
 
-    json_text = st.text_area(
-        "JSON hier einfügen",
-        height=260,
-        value=json.dumps(example, ensure_ascii=False, indent=2)
-    )
+    st.markdown("### 3) Versicherung separat eingeben (nicht aus JSON)")
+    v1, v2, v3 = st.columns(3)
+    with v1:
+        VERSICHERUNG_J = st.text_input("Versicherung", key="json_vers")
+    with v2:
+        VER_STRASSE_J = st.text_input("Versicherung Straße", key="json_ver_str")
+    with v3:
+        VER_ORT_J = st.text_input("Versicherung PLZ/Ort", key="json_ver_ort")
 
     colA, colB = st.columns(2)
     with colA:
-        btn_validate = st.button("🔎 JSON prüfen")
+        btn_validate = st.button("🔎 JSON prüfen", key="json_validate")
     with colB:
-        btn_generate = st.button("✅ Word erzeugen (JSON)", type="primary")
+        btn_generate = st.button("✅ Word erzeugen (JSON)", type="primary", key="json_generate")
 
     parsed = None
     if btn_validate or btn_generate:
@@ -230,6 +384,10 @@ with tab_json:
 
     if btn_generate and parsed:
         try:
+            parsed["VERSICHERUNG"] = VERSICHERUNG_J
+            parsed["VER_STRASSE"] = VER_STRASSE_J
+            parsed["VER_ORT"] = VER_ORT_J
+
             tpl = (parsed.get("TEMPLATE") or "").strip()
 
             if tpl == "standard":
@@ -245,9 +403,7 @@ with tab_json:
             elif tpl == "schreibentotalschaden":
                 out_path = wb.vorlage_schreibentotalschaden(parsed)
             else:
-                st.error(
-                    "Unbekanntes TEMPLATE. Erlaubt: standard, 130, ts_konkret, konkret_unter_wbw, ts_fiktiv, schreibentotalschaden"
-                )
+                st.error("Unbekanntes TEMPLATE.")
                 st.stop()
 
             st.success(f"Erstellt: {out_path.name}")
@@ -258,7 +414,5 @@ with tab_json:
                     file_name=out_path.name,
                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 )
-            st.caption(f"Gespeichert in: {wb.OUTPUT_DIR}")
-
         except Exception as e:
             st.error(f"Fehler beim Erzeugen: {e}")
