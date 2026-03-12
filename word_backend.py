@@ -57,13 +57,18 @@ def standardabfrage(data: dict) -> dict:
         "MANDANT_NACHNAME": data.get("MANDANT_NACHNAME", ""),
         "MANDANT_VORNAME": data.get("MANDANT_VORNAME", ""),
 
-        # Mandantenadresse (wie bisher)
+        # Mandantenadresse
         "UNFALLE_STRASSE": data.get("UNFALLE_STRASSE", ""),
         "MANDANT_PLZ_ORT": data.get("MANDANT_PLZ_ORT", ""),
 
-        # Unfall-Daten (NEU ergänzt)
+        # Unfallort
         "UNFALL_ORT": data.get("UNFALL_ORT", ""),
         "UNFALL_STRASSE": data.get("UNFALL_STRASSE", ""),
+
+        # Versicherung
+        "VERSICHERUNG": data.get("VERSICHERUNG", ""),
+        "VER_STRASSE": data.get("VER_STRASSE", ""),
+        "VER_ORT": data.get("VER_ORT", ""),
 
         "UNFALL_DATUM": data.get("UNFALL_DATUM", ""),
         "AKTENZEICHEN": data.get("AKTENZEICHEN", ""),  # besser String
@@ -76,7 +81,6 @@ def standardabfrage(data: dict) -> dict:
         "HEUTDATUM": datum,
 
         # Achtung: In deinen Vorlagen evtl. FRIST_DATUM statt FIRST_DATUM.
-        # Passe den Key an deine echten Platzhalter an, falls nötig.
         "FIRST_DATUM": first_datum_14_zukunft.strftime("%d.%m.%Y"),
     }
 
@@ -261,7 +265,6 @@ def vorlage_totalschaden_fiktiv(data: dict) -> Path:
 def vorlage_schreibentotalschaden(data: dict) -> Path:
     context_standard = standardabfrage(data)
 
-    # In deiner Vorlage dürfte es so ähnlich heißen; falls nicht: Key anpassen!
     wbau_txt = data.get("WIEDERBESCHAFFUNGSWERTAUFWAND", "")
 
     context_standard.update({
