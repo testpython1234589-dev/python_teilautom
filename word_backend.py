@@ -56,8 +56,15 @@ def standardabfrage(data: dict) -> dict:
     return {
         "MANDANT_NACHNAME": data.get("MANDANT_NACHNAME", ""),
         "MANDANT_VORNAME": data.get("MANDANT_VORNAME", ""),
+
+        # Mandantenadresse (wie bisher)
         "UNFALLE_STRASSE": data.get("UNFALLE_STRASSE", ""),
         "MANDANT_PLZ_ORT": data.get("MANDANT_PLZ_ORT", ""),
+
+        # Unfall-Daten (NEU ergänzt)
+        "UNFALL_ORT": data.get("UNFALL_ORT", ""),
+        "UNFALL_STRASSE": data.get("UNFALL_STRASSE", ""),
+
         "UNFALL_DATUM": data.get("UNFALL_DATUM", ""),
         "AKTENZEICHEN": data.get("AKTENZEICHEN", ""),  # besser String
         "FAHRZEUGTYP": data.get("FAHRZEUGTYP", ""),
