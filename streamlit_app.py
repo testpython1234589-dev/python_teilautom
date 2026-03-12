@@ -2,7 +2,7 @@ import streamlit as st
 import word_backend as wb
 
 st.set_page_config(page_title="Word Vorlagen Generator", layout="wide")
-st.title("Word Vorlagen Generator (Repo-Layout: Vorlagen im Root)")
+st.title("Word Vorlagen Generator (alle Vorlagen aus Repo)")
 
 with st.expander("📁 Vorlagen-Dateien im Repo", expanded=False):
     st.write(str(wb.VORLAGEN_DIR))
@@ -14,10 +14,9 @@ template_choice = st.selectbox(
         ("Standard Schreiben", "standard"),
         ("130 Prozent", "130"),
         ("Totalschaden (konkret)", "ts_konkret"),
-        ("Totalschaden konkret unter WBW", "ts_konkret_unter_wbw"),
-        # optional später:
-        # ("Schreiben Totalschaden", "schreibentotalschaden"),
-        # ("Totalschaden (fiktiv)", "ts_fiktiv"),
+        ("konkret unter WBW", "konkret_unter_wbw"),
+        ("Totalschaden (fiktiv)", "ts_fiktiv"),
+        ("Schreiben Totalschaden", "schreibentotalschaden"),
     ],
     format_func=lambda x: x[0]
 )[1]
@@ -38,6 +37,7 @@ with c3:
     VORSTEUERBERECHTIGUNG = st.text_input("Vorsteuerberechtigt (JA/NEIN)")
 
 SCHADENHERGANG = st.text_area("Schadenshergang", height=110)
+SCHADENSNUMMER = st.text_input("Schadensnummer (optional)")
 
 data = {
     "MANDANT_NACHNAME": MANDANT_NACHNAME,
@@ -50,6 +50,7 @@ data = {
     "KENNZEICHEN": KENNZEICHEN,
     "VORSTEUERBERECHTIGUNG": VORSTEUERBERECHTIGUNG,
     "SCHADENHERGANG": SCHADENHERGANG,
+    "SCHADENSNUMMER": SCHADENSNUMMER,
 }
 
 st.subheader("Vorlagen-spezifische Angaben")
@@ -90,7 +91,7 @@ elif template_choice == "ts_konkret":
         data["ZUSATZKOSTEN_BEZEICHNUNG"] = st.text_input("Zusatzkosten Bezeichnung (optional)")
         data["ZUSATZKOSTEN_BETRAG"] = st.text_input("Zusatzkosten Betrag (optional)")
 
-elif template_choice == "ts_konkret_unter_wbw":
+elif template_choice == "konkret_unter_wbw":
     a, b, c = st.columns(3)
     with a:
         data["REPARATURKOSTEN"] = st.text_input("Reparaturkosten")
@@ -102,6 +103,21 @@ elif template_choice == "ts_konkret_unter_wbw":
         data["ZUSATZKOSTEN_BEZEICHNUNG"] = st.text_input("Zusatzkosten Bezeichnung (optional)")
         data["ZUSATZKOSTEN_BETRAG"] = st.text_input("Zusatzkosten Betrag (optional)")
 
+elif template_choice == "ts_fiktiv":
+    a, b, c = st.columns(3)
+    with a:
+        data["WIEDERBESCHAFFUNGSWERT"] = st.text_input("Wiederbeschaffungswert")
+        data["WIEDERBESCHAFFUNGSAUFWAND"] = st.text_input("Wiederbeschaffungsaufwand")
+    with b:
+        data["NUTZUNGSAUSFALL"] = st.text_input("Nutzungsausfall")
+        data["RESTWERT"] = st.text_input("Restwert")
+    with c:
+        data["ZUSATZKOSTEN_BEZEICHNUNG"] = st.text_input("Zusatzkosten Bezeichnung (optional)")
+        data["ZUSATZKOSTEN_BETRAG"] = st.text_input("Zusatzkosten Betrag (optional)")
+
+elif template_choice == "schreibentotalschaden":
+    data["WIEDERBESCHAFFUNGSWERTAUFWAND"] = st.text_input("Wiederbeschaffungswertaufwand", placeholder="z.B. 4.321,00")
+
 st.divider()
 
 if st.button("✅ Word-Datei erzeugen", type="primary"):
@@ -112,8 +128,12 @@ if st.button("✅ Word-Datei erzeugen", type="primary"):
             out_path = wb.vorlage_130_prozent(data)
         elif template_choice == "ts_konkret":
             out_path = wb.vorlage_totalschaden_konkret(data)
-        elif template_choice == "ts_konkret_unter_wbw":
+        elif template_choice == "konkret_unter_wbw":
             out_path = wb.vorlage_totalschaden_konkret_unter_wbw(data)
+        elif template_choice == "ts_fiktiv":
+            out_path = wb.vorlage_totalschaden_fiktiv(data)
+        elif template_choice == "schreibentotalschaden":
+            out_path = wb.vorlage_schreibentotalschaden(data)
         else:
             st.error("Unbekannte Vorlage.")
             st.stop()
