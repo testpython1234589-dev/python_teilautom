@@ -2,7 +2,7 @@ from pathlib import Path
 from docxtpl import DocxTemplate
 from datetime import date, timedelta, datetime
 
-# Repo-Root ist gleichzeitig Vorlagen-Ordner (so wie bei dir aktuell)
+# Repo-Root ist Vorlagen-Ordner (wie bei dir)
 BASE_DIR = Path(__file__).resolve().parent
 VORLAGEN_DIR = BASE_DIR
 
@@ -27,7 +27,7 @@ def euro_to_float(t: str) -> float:
 def euro_format(value: float) -> str:
     return f"{value:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
-heute = datetime.now()
+# Fristdatum
 first_datum_14_zukunft = datetime.now() + timedelta(days=14)
 
 def standardabfrage(data: dict) -> dict:
@@ -36,7 +36,7 @@ def standardabfrage(data: dict) -> dict:
         "MANDANT_NACHNAME": data.get("MANDANT_NACHNAME", ""),
         "MANDANT_VORNAME": data.get("MANDANT_VORNAME", ""),
         "MANDANT_PLZ_ORT": data.get("MANDANT_PLZ_ORT", ""),
-        "AKTENZEICHEN": data.get("AKTENZEICHEN", ""),   # lieber String als int
+        "AKTENZEICHEN": data.get("AKTENZEICHEN", ""),  # als String safer
         "HEUTDATUM": datum,
         "FIRST_DATUM": first_datum_14_zukunft.strftime("%d.%m.%Y"),
         "SCHADENHERGANG": data.get("SCHADENHERGANG", ""),
@@ -45,6 +45,8 @@ def standardabfrage(data: dict) -> dict:
         "KENNZEICHEN": data.get("KENNZEICHEN", ""),
         "VORSTEUERBERECHTIGUNG": data.get("VORSTEUERBERECHTIGUNG", ""),
         "UNFALL_DATUM": data.get("UNFALL_DATUM", ""),
+        # optional: wenn du das später brauchst
+        "SCHADENSNUMMER": data.get("SCHADENSNUMMER", ""),
     }
 
 def save_word_bezeichg(tpl_name: str, context_standard: dict, out_prefix: str) -> Path:
@@ -65,7 +67,7 @@ def save_word_bezeichg(tpl_name: str, context_standard: dict, out_prefix: str) -
     tpl.save(str(out_path))
     return out_path
 
-# ---------- Vorlagen-Funktionen (Streamlit ruft diese auf) ----------
+# ---------------- Vorlagen-Funktionen ----------------
 
 def vorlage_schreiben(data: dict) -> Path:
     context_standard = standardabfrage(data)
@@ -101,7 +103,6 @@ def vorlage_130_prozent(data: dict) -> Path:
     na_txt = data.get("NUTZUNGSAUSFALL", "")
     wbw_txt = data.get("WIEDERBESCHAFFUNGSWERT", "")
     rw_txt = data.get("RESTWERT", "")
-
     zus_bez = data.get("ZUSATZKOSTEN_BEZEICHNUNG", "")
     zus_bet = data.get("ZUSATZKOSTEN_BETRAG", "")
 
@@ -135,7 +136,6 @@ def vorlage_totalschaden_konkret(data: dict) -> Path:
     wba_txt = data.get("WIEDERBESCHAFFUNGSAUFWAND", "")
     rw_txt = data.get("RESTWERT", "")
     mwst_txt = data.get("ERSATZBESCHAFFUNG_MWST", "")
-
     zus_bez = data.get("ZUSATZKOSTEN_BEZEICHNUNG", "")
     zus_bet = data.get("ZUSATZKOSTEN_BETRAG", "")
 
@@ -157,7 +157,7 @@ def vorlage_totalschaden_konkret(data: dict) -> Path:
         "KOSTENSUMME_X": euro_format(summe),
     })
 
-    return save_word_bezeichg("vorlage_totalschaden_konкрет-1.docx", context_standard, "totalschaden_konkret")
+    return save_word_bezeichg("vorlage_totalschaden_konkret-1.docx", context_standard, "totalschaden_konkret")
 
 
 def vorlage_totalschaden_konkret_unter_wbw(data: dict) -> Path:
@@ -167,7 +167,6 @@ def vorlage_totalschaden_konkret_unter_wbw(data: dict) -> Path:
     mwst_txt = data.get("MWST_BETRAG", "")
     wm_txt = data.get("WERTMINDERUNG", "")
     na_txt = data.get("NUTZUNGSAUSFALL", "")
-
     zus_bez = data.get("ZUSATZKOSTEN_BEZEICHNUNG", "")
     zus_bet = data.get("ZUSATZKOSTEN_BETRAG", "")
 
@@ -192,14 +191,47 @@ def vorlage_totalschaden_konkret_unter_wbw(data: dict) -> Path:
     return save_word_bezeichg("vorlage_konkret_unter_wbw-1.docx", context_standard, "konkret_unter_wbw")
 
 
-# Optional: falls du diese zwei später in Streamlit aktivieren willst
-def vorlage_schreibentotalschaden(data: dict) -> Path:
-    context_standard = standardabfrage(data)
-    # Vorlage hat bei dir wahrscheinlich WIEDERBESCHAFFUNGSWERTAUFWAND etc.
-    # Du kannst das später ergänzen.
-    return save_word_bezeichg("vorlage_schreibentotalschaden-1.docx", context_standard, "schreibentotalschaden")
-
 def vorlage_totalschaden_fiktiv(data: dict) -> Path:
     context_standard = standardabfrage(data)
-    # Werte später ergänzen
+
+    wbw_txt = data.get("WIEDERBESCHAFFUNGSWERT", "")
+    wba_txt = data.get("WIEDERBESCHAFFUNGSAUFWAND", "")
+    na_txt = data.get("NUTZUNGSAUSFALL", "")
+    rw_txt = data.get("RESTWERT", "")
+    zus_bez = data.get("ZUSATZKOSTEN_BEZEICHNUNG", "")
+    zus_bet = data.get("ZUSATZKOSTEN_BETRAG", "")
+
+    summe = (
+        euro_to_float(wbw_txt)
+        + euro_to_float(wba_txt)
+        + euro_to_float(na_txt)
+        + euro_to_float(rw_txt)
+        + euro_to_float(zus_bet)
+    )
+
+    context_standard.update({
+        "WIEDERBESCHAFFUNGSWERT": wbw_txt,
+        "WIEDERBESCHAFFUNGSAUFWAND": wba_txt,
+        "NUTZUNGSAUSFALL": na_txt,
+        "RESTWERT": rw_txt,
+        "ZUSATZKOSTEN_BEZEICHNUNG": zus_bez,
+        "ZUSATZKOSTEN_BETRAG": zus_bet,
+        "KOSTENSUMME_X": euro_format(summe),
+    })
+
     return save_word_bezeichg("vorlage_totalschaden_fiktiv-1.docx", context_standard, "totalschaden_fiktiv")
+
+
+def vorlage_schreibentotalschaden(data: dict) -> Path:
+    context_standard = standardabfrage(data)
+
+    # Diese Vorlage ist bei dir ein “Schreiben” mit einer zentralen Summe.
+    # Häufiger Platzhalter-Name: WIEDERBESCHAFFUNGSWERTAUFWAND
+    wbau_txt = data.get("WIEDERBESCHAFFUNGSWERTAUFWAND", "")
+
+    context_standard.update({
+        "WIEDERBESCHAFFUNGSWERTAUFWAND": wbau_txt,
+        "KOSTENSUMME_X": euro_format(euro_to_float(wbau_txt)),
+    })
+
+    return save_word_bezeichg("vorlage_schreibentotalschaden-1.docx", context_standard, "schreibentotalschaden")
