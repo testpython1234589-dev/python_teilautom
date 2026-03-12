@@ -1,17 +1,10 @@
 import streamlit as st
-from pathlib import Path
-
-# Importiere deine Logik
 import word_backend as wb
 
 st.set_page_config(page_title="Word Vorlagen Generator", layout="wide")
-st.title("Word Vorlagen Generator (Streamlit)")
+st.title("Word Vorlagen Generator (Repo-Layout: Vorlagen im Root)")
 
-if not wb.VORLAGEN_DIR.exists():
-    st.error(f"Vorlagenordner nicht gefunden: {wb.VORLAGEN_DIR}")
-    st.stop()
-
-with st.expander("📁 Vorlagen im Ordner anzeigen", expanded=False):
+with st.expander("📁 Vorlagen-Dateien im Repo", expanded=False):
     st.write(str(wb.VORLAGEN_DIR))
     st.write([p.name for p in wb.VORLAGEN_DIR.glob("*.docx")])
 
@@ -22,6 +15,9 @@ template_choice = st.selectbox(
         ("130 Prozent", "130"),
         ("Totalschaden (konkret)", "ts_konkret"),
         ("Totalschaden konkret unter WBW", "ts_konkret_unter_wbw"),
+        # optional später:
+        # ("Schreiben Totalschaden", "schreibentotalschaden"),
+        # ("Totalschaden (fiktiv)", "ts_fiktiv"),
     ],
     format_func=lambda x: x[0]
 )[1]
@@ -126,7 +122,7 @@ if st.button("✅ Word-Datei erzeugen", type="primary"):
 
         with open(out_path, "rb") as f:
             st.download_button(
-                label="⬇️ Download .docx",
+                "⬇️ Download .docx",
                 data=f,
                 file_name=out_path.name,
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
