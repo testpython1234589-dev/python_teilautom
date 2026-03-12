@@ -44,6 +44,13 @@ with tab_form:
         KENNZEICHEN = st.text_input("Kennzeichen")
         VORSTEUERBERECHTIGUNG = st.text_input("Vorsteuerberechtigt (JA/NEIN)")
 
+    # NEU: Unfallort + Unfallstraße
+    u1, u2 = st.columns(2)
+    with u1:
+        UNFALL_ORT = st.text_input("Unfallort (Stadt/Ort)")
+    with u2:
+        UNFALL_STRASSE = st.text_input("Unfallstraße (Straße/Hausnr.)")
+
     SCHADENHERGANG = st.text_area("Schadenshergang", height=110)
     SCHADENSNUMMER = st.text_input("Schadensnummer (optional)")
 
@@ -59,6 +66,10 @@ with tab_form:
         "VORSTEUERBERECHTIGUNG": VORSTEUERBERECHTIGUNG,
         "SCHADENHERGANG": SCHADENHERGANG,
         "SCHADENSNUMMER": SCHADENSNUMMER,
+
+        # NEU:
+        "UNFALL_ORT": UNFALL_ORT,
+        "UNFALL_STRASSE": UNFALL_STRASSE,
     }
 
     st.subheader("Vorlagen-spezifische Angaben")
@@ -185,6 +196,8 @@ with tab_json:
         "FAHRZEUGTYP": "VW Golf",
         "KENNZEICHEN": "HAL 2428F",
         "VORSTEUERBERECHTIGUNG": "JA",
+        "UNFALL_ORT": "Halle (Saale)",
+        "UNFALL_STRASSE": "Musterstraße 12",
         "SCHADENHERGANG": "Hergang...",
         "WERTMINDERUNG": "1000",
         "REPARATURKOSTEN": "1000",
@@ -232,7 +245,9 @@ with tab_json:
             elif tpl == "schreibentotalschaden":
                 out_path = wb.vorlage_schreibentotalschaden(parsed)
             else:
-                st.error("Unbekanntes TEMPLATE. Erlaubt: standard, 130, ts_konkret, konkret_unter_wbw, ts_fiktiv, schreibentotalschaden")
+                st.error(
+                    "Unbekanntes TEMPLATE. Erlaubt: standard, 130, ts_konkret, konkret_unter_wbw, ts_fiktiv, schreibentotalschaden"
+                )
                 st.stop()
 
             st.success(f"Erstellt: {out_path.name}")
