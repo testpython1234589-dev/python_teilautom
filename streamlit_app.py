@@ -55,7 +55,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "WERTMINDERUNG": "",
   "REPARATURKOSTEN": "",
   "KOSTENPAUSCHALE": "",
-  "SACHVERST_KOSTEN": ""
+  "GUTACHTERKOSTEN": ""
 }
 """,
     "130 Prozent": """Gib NUR JSON zurück (keine Erklärungen).
@@ -367,3 +367,4 @@ if st.button("✅ Word erzeugen", type="primary"):
         st.error(f"JSON Fehler: {e}")
     except Exception as e:
         st.error(f"Fehler: {e}")
+
