@@ -27,9 +27,9 @@ TEMPLATES = {
 # Prompts
 # -----------------------------
 PROMPTS = {
-    Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
+    
     "Standard Schreiben": """Gib NUR JSON zurück (keine Erklärungen).
-Unbekannt -> "".
+Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
 {
@@ -576,6 +576,7 @@ if st.button("✅ Word erzeugen", type="primary"):
         st.error(str(e))
     except Exception as e:
         st.error(f"Fehler: {type(e).__name__}: {e}")
+
 
 
 
