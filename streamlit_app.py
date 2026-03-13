@@ -507,7 +507,7 @@ with st.expander("📁 Vorlagen im Repo", expanded=False):
 template_label = st.selectbox("Vorlage wählen", list(TEMPLATES.keys()))
 tpl_name, out_prefix = TEMPLATES[template_label]
 
-st.subheader("1) Prompt kopieren")
+st.subheader("1) Prompt kopieren (Aktenzeichen in Json Feld Umändern!)")
 prompt_choice = st.selectbox(
     "Prompt wählen",
     list(PROMPTS.keys()),
@@ -570,3 +570,4 @@ if st.button("✅ Word erzeugen", type="primary"):
         st.error(str(e))
     except Exception as e:
         st.error(f"Fehler: {type(e).__name__}: {e}")
+
