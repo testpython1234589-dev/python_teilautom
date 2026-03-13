@@ -27,6 +27,7 @@ TEMPLATES = {
 # Prompts
 # -----------------------------
 PROMPTS = {
+    Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
     "Standard Schreiben": """Gib NUR JSON zurück (keine Erklärungen).
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
@@ -61,6 +62,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 }
 """,
     "130 Prozent": """Gib NUR JSON zurück (keine Erklärungen).
+     Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
@@ -96,6 +98,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 }
 """,
     "Totalschaden (konkret)": """Gib NUR JSON zurück (keine Erklärungen).
+     Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
@@ -130,6 +133,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 }
 """,
     "Konkret unter WBW": """Gib NUR JSON zurück (keine Erklärungen).
+     Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
@@ -164,6 +168,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 }
 """,
     "Totalschaden (fiktiv)": """Gib NUR JSON zurück (keine Erklärungen).
+     Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
@@ -198,6 +203,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 }
 """,
     "Schreiben Totalschaden": """Gib NUR JSON zurück (keine Erklärungen).
+     Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
@@ -570,5 +576,6 @@ if st.button("✅ Word erzeugen", type="primary"):
         st.error(str(e))
     except Exception as e:
         st.error(f"Fehler: {type(e).__name__}: {e}")
+
 
 
