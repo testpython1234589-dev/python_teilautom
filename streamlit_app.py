@@ -1,23 +1,43 @@
+from __future__ import annotations
+
 import json
+import os
+import re
+from datetime import date, timedelta, datetime
+from typing import Dict, Any, Set
+
 import streamlit as st
+import fitz  # PyMuPDF
+from openai import OpenAI
+
 import word_backend as wb
 
-st.set_page_config(page_title="Word Vorlagen Generator", layout="wide")
-st.title("Word Vorlagen Generator (Streamlit)")
 
-with st.expander("📁 .docx Vorlagen im Repo anzeigen", expanded=False):
-    st.write(str(wb.VORLAGEN_DIR))
-    st.write([p.name for p in wb.VORLAGEN_DIR.glob("*.docx")])
+# -----------------------------
+# Vorlagen
+# -----------------------------
+TEMPLATES = {
+    "Standard Schreiben": ("vorlage_schreiben-1.docx", "Standard_schreiben"),
+    "130 Prozent": ("vorlage_130_prozent-1.docx", "130_prozent"),
+    "Totalschaden (konkret)": ("vorlage_totalschaden_konkret-1.docx", "totalschaden_konkret"),
+    "Konkret unter WBW": ("vorlage_konkret_unter_wbw-1.docx", "konkret_unter_wbw"),
+    "Totalschaden (fiktiv)": ("vorlage_totalschaden_fiktiv-1.docx", "totalschaden_fiktiv"),
+    "Schreiben Totalschaden": ("vorlage_schreibentotalschaden-1.docx", "schreibentotalschaden"),
+}
 
-tab_form, tab_json = st.tabs(["🧾 Formular", "🤖 JSON/ChatGPT einfügen"])
 
+# -----------------------------
+# Prompts (werden angezeigt & kopierbar via st.code)
+# Versicherung soll aus JSON kommen -> Prompt weist darauf hin.
+# -----------------------------
 PROMPTS = {
-    "Standard Schreiben": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown, keine Codeblöcke.
-Keys exakt so lassen. Unbekannte Werte als "".
-Beträge als "1.234,56" oder "1234,56".
-WICHTIG: VORSTEUERBERECHTIGUNG: bei JA -> "" (leer), bei NEIN -> "nicht".
-WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
+    "Standard Schreiben": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown.
+Unbekannt -> "".
+Beträge im deutschen Format (z.B. 1.234,56).
+VORSTEUERBERECHTIGUNG-Regel: wenn im Text "ja" -> "" (leer), wenn "nein" -> "nicht".
+WICHTIG: Versicherungsdaten (VERSICHERUNG, VER_STRASSE, VER_ORT) NICHT ausfüllen (kommen aus separater JSON-Datei).
 
+JSON:
 {
   "TEMPLATE": "standard",
   "MANDANT_NACHNAME": "",
@@ -36,15 +56,19 @@ WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
   "WERTMINDERUNG": "",
   "REPARATURKOSTEN": "",
   "KOSTENPAUSCHALE": "",
-  "SACHVERST_KOSTEN": ""
+  "SACHVERST_KOSTEN": "",
+  "VERSICHERUNG": "",
+  "VER_STRASSE": "",
+  "VER_ORT": ""
 }
 """,
-    "130 Prozent": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown, keine Codeblöcke.
-Keys exakt so lassen. Unbekannte Werte als "".
-Beträge als "1.234,56" oder "1234,56".
-WICHTIG: VORSTEUERBERECHTIGUNG: bei JA -> "" (leer), bei NEIN -> "nicht".
-WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
+    "130 Prozent": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown.
+Unbekannt -> "".
+Beträge im deutschen Format (z.B. 1.234,56).
+VORSTEUERBERECHTIGUNG-Regel: "ja" -> "" (leer), "nein" -> "nicht".
+WICHTIG: Versicherungsdaten NICHT ausfüllen (kommen aus separater JSON-Datei).
 
+JSON:
 {
   "TEMPLATE": "130",
   "MANDANT_NACHNAME": "",
@@ -66,15 +90,19 @@ WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
   "WIEDERBESCHAFFUNGSWERT": "",
   "RESTWERT": "",
   "ZUSATZKOSTEN_BEZEICHNUNG": "",
-  "ZUSATZKOSTEN_BETRAG": ""
+  "ZUSATZKOSTEN_BETRAG": "",
+  "VERSICHERUNG": "",
+  "VER_STRASSE": "",
+  "VER_ORT": ""
 }
 """,
-    "Totalschaden (konkret)": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown, keine Codeblöcke.
-Keys exakt so lassen. Unbekannte Werte als "".
-Beträge als "1.234,56" oder "1234,56".
-WICHTIG: VORSTEUERBERECHTIGUNG: bei JA -> "" (leer), bei NEIN -> "nicht".
-WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
+    "Totalschaden (konkret)": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown.
+Unbekannt -> "".
+Beträge im deutschen Format (z.B. 1.234,56).
+VORSTEUERBERECHTIGUNG-Regel: "ja" -> "" (leer), "nein" -> "nicht".
+WICHTIG: Versicherungsdaten NICHT ausfüllen (kommen aus separater JSON-Datei).
 
+JSON:
 {
   "TEMPLATE": "ts_konkret",
   "MANDANT_NACHNAME": "",
@@ -95,15 +123,19 @@ WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
   "RESTWERT": "",
   "ERSATZBESCHAFFUNG_MWST": "",
   "ZUSATZKOSTEN_BEZEICHNUNG": "",
-  "ZUSATZKOSTEN_BETRAG": ""
+  "ZUSATZKOSTEN_BETRAG": "",
+  "VERSICHERUNG": "",
+  "VER_STRASSE": "",
+  "VER_ORT": ""
 }
 """,
-    "Konkret unter WBW": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown, keine Codeblöcke.
-Keys exakt so lassen. Unbekannte Werte als "".
-Beträge als "1.234,56" oder "1234,56".
-WICHTIG: VORSTEUERBERECHTIGUNG: bei JA -> "" (leer), bei NEIN -> "nicht".
-WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
+    "Konkret unter WBW": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown.
+Unbekannt -> "".
+Beträge im deutschen Format (z.B. 1.234,56).
+VORSTEUERBERECHTIGUNG-Regel: "ja" -> "" (leer), "nein" -> "nicht".
+WICHTIG: Versicherungsdaten NICHT ausfüllen (kommen aus separater JSON-Datei).
 
+JSON:
 {
   "TEMPLATE": "konkret_unter_wbw",
   "MANDANT_NACHNAME": "",
@@ -124,15 +156,19 @@ WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
   "WERTMINDERUNG": "",
   "NUTZUNGSAUSFALL": "",
   "ZUSATZKOSTEN_BEZEICHNUNG": "",
-  "ZUSATZKOSTEN_BETRAG": ""
+  "ZUSATZKOSTEN_BETRAG": "",
+  "VERSICHERUNG": "",
+  "VER_STRASSE": "",
+  "VER_ORT": ""
 }
 """,
-    "Totalschaden (fiktiv)": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown, keine Codeblöcke.
-Keys exakt so lassen. Unbekannte Werte als "".
-Beträge als "1.234,56" oder "1234,56".
-WICHTIG: VORSTEUERBERECHTIGUNG: bei JA -> "" (leer), bei NEIN -> "nicht".
-WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
+    "Totalschaden (fiktiv)": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown.
+Unbekannt -> "".
+Beträge im deutschen Format (z.B. 1.234,56).
+VORSTEUERBERECHTIGUNG-Regel: "ja" -> "" (leer), "nein" -> "nicht".
+WICHTIG: Versicherungsdaten NICHT ausfüllen (kommen aus separater JSON-Datei).
 
+JSON:
 {
   "TEMPLATE": "ts_fiktiv",
   "MANDANT_NACHNAME": "",
@@ -153,15 +189,19 @@ WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
   "NUTZUNGSAUSFALL": "",
   "RESTWERT": "",
   "ZUSATZKOSTEN_BEZEICHNUNG": "",
-  "ZUSATZKOSTEN_BETRAG": ""
+  "ZUSATZKOSTEN_BETRAG": "",
+  "VERSICHERUNG": "",
+  "VER_STRASSE": "",
+  "VER_ORT": ""
 }
 """,
-    "Schreiben Totalschaden": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown, keine Codeblöcke.
-Keys exakt so lassen. Unbekannte Werte als "".
-Beträge als "1.234,56" oder "1234,56".
-WICHTIG: VORSTEUERBERECHTIGUNG: bei JA -> "" (leer), bei NEIN -> "nicht".
-WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
+    "Schreiben Totalschaden": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown.
+Unbekannt -> "".
+Beträge im deutschen Format (z.B. 1.234,56).
+VORSTEUERBERECHTIGUNG-Regel: "ja" -> "" (leer), "nein" -> "nicht".
+WICHTIG: Versicherungsdaten NICHT ausfüllen (kommen aus separater JSON-Datei).
 
+JSON:
 {
   "TEMPLATE": "schreibentotalschaden",
   "MANDANT_NACHNAME": "",
@@ -177,242 +217,196 @@ WICHTIG: Versicherung NICHT eintragen (wird separat abgefragt).
   "VORSTEUERBERECHTIGUNG": "",
   "SCHADENHERGANG": "",
   "SCHADENSNUMMER": "",
-  "WIEDERBESCHAFFUNGSWERTAUFWAND": ""
+  "WIEDERBESCHAFFUNGSWERTAUFWAND": "",
+  "VERSICHERUNG": "",
+  "VER_STRASSE": "",
+  "VER_ORT": ""
 }
-"""
+""",
 }
+
 
 # -----------------------------
-# TAB 1: Formular
+# Helpers
 # -----------------------------
-with tab_form:
-    template_choice = st.selectbox(
-        "Vorlage wählen",
-        [
-            ("Standard Schreiben", "standard"),
-            ("130 Prozent", "130"),
-            ("Totalschaden (konkret)", "ts_konkret"),
-            ("Totalschaden konkret unter WBW", "konkret_unter_wbw"),
-            ("Totalschaden (fiktiv)", "ts_fiktiv"),
-            ("Schreiben Totalschaden", "schreibentotalschaden"),
-        ],
-        format_func=lambda x: x[0]
-    )[1]
+def pdf_bytes_to_text(pdf_bytes: bytes) -> str:
+    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    parts = []
+    for i in range(doc.page_count):
+        parts.append(doc.load_page(i).get_text("text"))
+    return "\n".join(parts)
 
-    st.subheader("Standarddaten (für alle Vorlagen)")
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        MANDANT_NACHNAME = st.text_input("Mandant Nachname")
-        UNFALLE_STRASSE = st.text_input("Straße (Mandant)")
-        UNFALL_DATUM = st.text_input("Unfalldatum")
-    with c2:
-        MANDANT_VORNAME = st.text_input("Mandant Vorname")
-        MANDANT_PLZ_ORT = st.text_input("PLZ / Ort")
-        AKTENZEICHEN = st.text_input("Aktenzeichen")
-    with c3:
-        FAHRZEUGTYP = st.text_input("Fahrzeugtyp")
-        KENNZEICHEN = st.text_input("Kennzeichen")
-        VORSTEUERBERECHTIGUNG = st.text_input("Vorsteuerberechtigt (JA/NEIN)")
 
-    u1, u2 = st.columns(2)
-    with u1:
-        UNFALL_ORT = st.text_input("Unfallort (Stadt/Ort)")
-    with u2:
-        UNFALL_STRASSE = st.text_input("Unfallstraße (Straße/Hausnr.)")
+def normalize_vorsteuer(value: str) -> str:
+    v = (value or "").strip().lower()
+    if v in {"ja", "yes", "y", "true"}:
+        return ""
+    if v in {"nein", "no", "n", "false"}:
+        return "nicht"
+    return value
 
-    v1, v2, v3 = st.columns(3)
-    with v1:
-        VERSICHERUNG = st.text_input("Versicherung")
-    with v2:
-        VER_STRASSE = st.text_input("Versicherung Straße")
-    with v3:
-        VER_ORT = st.text_input("Versicherung PLZ/Ort")
 
-    SCHADENHERGANG = st.text_area("Schadenshergang", height=110)
-    SCHADENSNUMMER = st.text_input("Schadensnummer (optional)")
+def standard_defaults(keys: Set[str]) -> Dict[str, str]:
+    today = date.today().strftime("%d.%m.%Y")
+    frist = (datetime.now() + timedelta(days=14)).strftime("%d.%m.%Y")
+    out = {}
+    if "HEUTDATUM" in keys:
+        out["HEUTDATUM"] = today
+    # Falls deine Vorlage FRIST_DATUM nutzt -> hier anpassen:
+    if "FIRST_DATUM" in keys:
+        out["FIRST_DATUM"] = frist
+    return out
 
-    data = {
-        "MANDANT_NACHNAME": MANDANT_NACHNAME,
-        "MANDANT_VORNAME": MANDANT_VORNAME,
-        "UNFALLE_STRASSE": UNFALLE_STRASSE,
-        "MANDANT_PLZ_ORT": MANDANT_PLZ_ORT,
-        "UNFALL_DATUM": UNFALL_DATUM,
-        "AKTENZEICHEN": AKTENZEICHEN,
-        "FAHRZEUGTYP": FAHRZEUGTYP,
-        "KENNZEICHEN": KENNZEICHEN,
-        "VORSTEUERBERECHTIGUNG": VORSTEUERBERECHTIGUNG,
-        "SCHADENHERGANG": SCHADENHERGANG,
-        "SCHADENSNUMMER": SCHADENSNUMMER,
-        "UNFALL_ORT": UNFALL_ORT,
-        "UNFALL_STRASSE": UNFALL_STRASSE,
-        "VERSICHERUNG": VERSICHERUNG,
-        "VER_STRASSE": VER_STRASSE,
-        "VER_ORT": VER_ORT,
+
+def build_json_schema(keys: Set[str]) -> str:
+    keys_sorted = sorted(keys)
+    lines = []
+    for i, k in enumerate(keys_sorted):
+        comma = "," if i < len(keys_sorted) - 1 else ""
+        lines.append(f'  "{k}": ""{comma}')
+    return "{\n" + "\n".join(lines) + "\n}"
+
+
+def build_extraction_prompt(keys: Set[str], pdf_text: str) -> str:
+    """
+    Prompt, den wir intern für die KI verwenden (nicht die UI-Prompts).
+    Wir sagen explizit: Versicherung aus JSON, daher leer lassen.
+    """
+    rules = (
+        "Gib NUR JSON zurück. Keine Erklärungen.\n"
+        "JSON muss ALLE Keys enthalten.\n"
+        "Unbekannt -> \"\".\n"
+        "VORSTEUERBERECHTIGUNG: ja -> \"\" (leer), nein -> \"nicht\".\n"
+        "Beträge möglichst deutsches Format (z.B. 1.234,56).\n"
+        "WICHTIG: Versicherungsdaten (VERSICHERUNG, VER_STRASSE, VER_ORT) NICHT ausfüllen -> \"\".\n"
+    )
+    schema = build_json_schema(keys)
+    return f"{rules}\nJSON-SCHEMA:\n{schema}\n\nPDF_TEXT:\n<<<\n{pdf_text}\n>>>"
+
+
+def openai_extract_json(keys: Set[str], pdf_text: str, model: str) -> Dict[str, Any]:
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        raise RuntimeError("OPENAI_API_KEY fehlt (Streamlit Secrets oder Umgebungsvariable).")
+
+    client = OpenAI()
+    prompt = build_extraction_prompt(keys, pdf_text)
+
+    resp = client.responses.create(model=model, input=prompt)
+    text = getattr(resp, "output_text", None)
+    if not text:
+        raise RuntimeError("OpenAI Antwort enthält keinen output_text.")
+
+    # robustes JSON parsing
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        m = re.search(r"\{.*\}", text, re.DOTALL)
+        if not m:
+            raise
+        data = json.loads(m.group(0))
+
+    for k in keys:
+        data.setdefault(k, "")
+
+    if "VORSTEUERBERECHTIGUNG" in data:
+        data["VORSTEUERBERECHTIGUNG"] = normalize_vorsteuer(str(data.get("VORSTEUERBERECHTIGUNG", "")))
+
+    return data
+
+
+def load_insurance_json(uploaded_json_file) -> Dict[str, Any]:
+    """
+    Erwartet JSON-Datei mit z.B.:
+    {
+      "VERSICHERUNG": "Allianz ...",
+      "VER_STRASSE": "Musterstr. 1",
+      "VER_ORT": "10115 Berlin"
     }
+    """
+    if uploaded_json_file is None:
+        return {}
 
-    st.subheader("Vorlagen-spezifische Angaben")
-    if template_choice == "standard":
-        a, b, c, d = st.columns(4)
-        with a:
-            data["WERTMINDERUNG"] = st.text_input("Wertminderung", placeholder="1.001,99")
-        with b:
-            data["REPARATURKOSTEN"] = st.text_input("Reparaturkosten")
-        with c:
-            data["KOSTENPAUSCHALE"] = st.text_input("Kostenpauschale (optional)")
-        with d:
-            data["SACHVERST_KOSTEN"] = st.text_input("Sachverständigerkosten")
+    raw = uploaded_json_file.read()
+    try:
+        data = json.loads(raw.decode("utf-8"))
+    except Exception:
+        # Fallback: manchmal kommt schon str
+        data = json.loads(raw)
 
-    elif template_choice == "130":
-        a, b, c = st.columns(3)
-        with a:
-            data["REPARATURKOSTEN"] = st.text_input("Reparaturkosten")
-            data["MWST_BETRAG"] = st.text_input("Mehrwertsteuer")
-        with b:
-            data["NUTZUNGSAUSFALL"] = st.text_input("Nutzungsausfall")
-            data["WIEDERBESCHAFFUNGSWERT"] = st.text_input("Wiederbeschaffungswert")
-        with c:
-            data["RESTWERT"] = st.text_input("Restwert")
-            data["ZUSATZKOSTEN_BEZEICHNUNG"] = st.text_input("Zusatzkosten Bezeichnung (optional)")
-            data["ZUSATZKOSTEN_BETRAG"] = st.text_input("Zusatzkosten Betrag (optional)")
+    # Nur die Versicherungskeys übernehmen
+    out = {}
+    for k in ["VERSICHERUNG", "VER_STRASSE", "VER_ORT"]:
+        if k in data and str(data[k]).strip():
+            out[k] = data[k]
+    return out
 
-    elif template_choice == "ts_konkret":
-        a, b, c = st.columns(3)
-        with a:
-            data["WIEDERBESCHAFFUNGSWERT"] = st.text_input("Wiederbeschaffungswert")
-            data["WIEDERBESCHAFFUNGSAUFWAND"] = st.text_input("Wiederbeschaffungsaufwand")
-        with b:
-            data["RESTWERT"] = st.text_input("Restwert")
-            data["ERSATZBESCHAFFUNG_MWST"] = st.text_input("Ersatzbeschaffungs-MWST")
-        with c:
-            data["ZUSATZKOSTEN_BEZEICHNUNG"] = st.text_input("Zusatzkosten Bezeichnung (optional)")
-            data["ZUSATZKOSTEN_BETRAG"] = st.text_input("Zusatzkosten Betrag (optional)")
-
-    elif template_choice == "konkret_unter_wbw":
-        a, b, c = st.columns(3)
-        with a:
-            data["REPARATURKOSTEN"] = st.text_input("Reparaturkosten")
-            data["MWST_BETRAG"] = st.text_input("Mehrwertsteuer")
-        with b:
-            data["WERTMINDERUNG"] = st.text_input("Wertminderung")
-            data["NUTZUNGSAUSFALL"] = st.text_input("Nutzungsausfall")
-        with c:
-            data["ZUSATZKOSTEN_BEZEICHNUNG"] = st.text_input("Zusatzkosten Bezeichnung (optional)")
-            data["ZUSATZKOSTEN_BETRAG"] = st.text_input("Zusatzkosten Betrag (optional)")
-
-    elif template_choice == "ts_fiktiv":
-        a, b, c = st.columns(3)
-        with a:
-            data["WIEDERBESCHAFFUNGSWERT"] = st.text_input("Wiederbeschaffungswert")
-            data["WIEDERBESCHAFFUNGSAUFWAND"] = st.text_input("Wiederbeschaffungsaufwand")
-        with b:
-            data["NUTZUNGSAUSFALL"] = st.text_input("Nutzungsausfall")
-            data["RESTWERT"] = st.text_input("Restwert")
-        with c:
-            data["ZUSATZKOSTEN_BEZEICHNUNG"] = st.text_input("Zusatzkosten Bezeichnung (optional)")
-            data["ZUSATZKOSTEN_BETRAG"] = st.text_input("Zusatzkosten Betrag (optional)")
-
-    elif template_choice == "schreibentotalschaden":
-        data["WIEDERBESCHAFFUNGSWERTAUFWAND"] = st.text_input("Wiederbeschaffungswertaufwand")
-
-    st.divider()
-    if st.button("✅ Word-Datei erzeugen (Formular)", type="primary"):
-        try:
-            if template_choice == "standard":
-                out_path = wb.vorlage_schreiben(data)
-            elif template_choice == "130":
-                out_path = wb.vorlage_130_prozent(data)
-            elif template_choice == "ts_konkret":
-                out_path = wb.vorlage_totalschaden_konkret(data)
-            elif template_choice == "konkret_unter_wbw":
-                out_path = wb.vorlage_totalschaden_konkret_unter_wbw(data)
-            elif template_choice == "ts_fiktiv":
-                out_path = wb.vorlage_totalschaden_fiktiv(data)
-            elif template_choice == "schreibentotalschaden":
-                out_path = wb.vorlage_schreibentotalschaden(data)
-            else:
-                st.error("Unbekannte Vorlage.")
-                st.stop()
-
-            st.success(f"Erstellt: {out_path.name}")
-            with open(out_path, "rb") as f:
-                st.download_button(
-                    "⬇️ Download .docx",
-                    data=f,
-                    file_name=out_path.name,
-                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                )
-        except Exception as e:
-            st.error(f"Fehler: {e}")
 
 # -----------------------------
-# TAB 2: JSON/ChatGPT einfügen (Versicherung separat!)
+# UI
 # -----------------------------
-with tab_json:
-    st.subheader("JSON aus ChatGPT einfügen (ein Feld) + Versicherung separat")
+st.set_page_config(page_title="PDF → Word (KI + Versicherungs-JSON)", layout="wide")
+st.title("PDF-Gutachten → Word-Vorlage (KI extrahiert, Versicherung aus JSON)")
 
-    st.markdown("### 1) Prompt auswählen & kopieren")
-    prompt_name = st.selectbox("Prompt wählen", list(PROMPTS.keys()))
-    st.code(PROMPTS[prompt_name], language="text")
+with st.expander("📁 Vorlagen im Repo", expanded=False):
+    st.write(str(wb.VORLAGEN_DIR))
+    st.write([p.name for p in wb.VORLAGEN_DIR.glob("*.docx")])
 
-    st.markdown("### 2) JSON von ChatGPT hier einfügen")
-    json_text = st.text_area("JSON", height=260)
+template_label = st.selectbox("Vorlage wählen", list(TEMPLATES.keys()))
+tpl_name, out_prefix = TEMPLATES[template_label]
 
-    st.markdown("### 3) Versicherung separat eingeben (nicht aus JSON)")
-    v1, v2, v3 = st.columns(3)
-    with v1:
-        VERSICHERUNG_J = st.text_input("Versicherung", key="json_vers")
-    with v2:
-        VER_STRASSE_J = st.text_input("Versicherung Straße", key="json_ver_str")
-    with v3:
-        VER_ORT_J = st.text_input("Versicherung PLZ/Ort", key="json_ver_ort")
+st.subheader("1) Dateien hochladen")
+pdf_file = st.file_uploader("Gutachten als PDF hochladen", type=["pdf"])
+insurance_json_file = st.file_uploader("Versicherung als JSON hochladen", type=["json"])
 
-    colA, colB = st.columns(2)
-    with colA:
-        btn_validate = st.button("🔎 JSON prüfen", key="json_validate")
-    with colB:
-        btn_generate = st.button("✅ Word erzeugen (JSON)", type="primary", key="json_generate")
+st.subheader("2) Prompt-Auswahl (sichtbar & kopierbar)")
+prompt_choice = st.selectbox("Prompt wählen", list(PROMPTS.keys()), index=list(PROMPTS.keys()).index(template_label))
+st.code(PROMPTS[prompt_choice], language="text")  # zeigt Prompt + Copy-Icon
 
-    parsed = None
-    if btn_validate or btn_generate:
-        try:
-            parsed = json.loads(json_text)
-            st.success("JSON ist gültig.")
-            st.json(parsed)
-        except Exception as e:
-            st.error(f"JSON Fehler: {e}")
-            parsed = None
+st.subheader("3) KI Einstellungen")
+model = st.selectbox("OpenAI Modell", ["gpt-4o-mini", "gpt-4.1-mini", "gpt-4o"], index=0)
+show_debug = st.toggle("Debug: extrahierte Werte anzeigen", value=True)
 
-    if btn_generate and parsed:
-        try:
-            parsed["VERSICHERUNG"] = VERSICHERUNG_J
-            parsed["VER_STRASSE"] = VER_STRASSE_J
-            parsed["VER_ORT"] = VER_ORT_J
+st.divider()
 
-            tpl = (parsed.get("TEMPLATE") or "").strip()
+disabled = (pdf_file is None)
+if st.button("✅ PDF analysieren & Word erzeugen", type="primary", disabled=disabled):
+    try:
+        pdf_bytes = pdf_file.read()
+        pdf_text = pdf_bytes_to_text(pdf_bytes)
 
-            if tpl == "standard":
-                out_path = wb.vorlage_schreiben(parsed)
-            elif tpl == "130":
-                out_path = wb.vorlage_130_prozent(parsed)
-            elif tpl == "ts_konkret":
-                out_path = wb.vorlage_totalschaden_konkret(parsed)
-            elif tpl == "konkret_unter_wbw":
-                out_path = wb.vorlage_totalschaden_konkret_unter_wbw(parsed)
-            elif tpl == "ts_fiktiv":
-                out_path = wb.vorlage_totalschaden_fiktiv(parsed)
-            elif tpl == "schreibentotalschaden":
-                out_path = wb.vorlage_schreibentotalschaden(parsed)
-            else:
-                st.error("Unbekanntes TEMPLATE.")
-                st.stop()
+        # Keys aus Template (Backend ohne KI)
+        keys = wb.get_template_vars(tpl_name)
 
-            st.success(f"Erstellt: {out_path.name}")
-            with open(out_path, "rb") as f:
-                st.download_button(
-                    "⬇️ Download .docx",
-                    data=f,
-                    file_name=out_path.name,
-                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                )
-        except Exception as e:
-            st.error(f"Fehler beim Erzeugen: {e}")
+        # KI extrahiert alles (ohne Versicherung)
+        extracted = openai_extract_json(keys, pdf_text, model=model)
+
+        # Defaults für Datum/Frist
+        extracted.update({k: v for k, v in standard_defaults(keys).items() if not str(extracted.get(k, "")).strip()})
+
+        # Versicherung aus JSON überschreibt/ergänzt
+        ins = load_insurance_json(insurance_json_file)
+        for k, v in ins.items():
+            extracted[k] = v  # bewusst überschreiben
+
+        # Rendern
+        out_path = wb.render_word(tpl_name, extracted, out_prefix)
+
+        st.success(f"Word erstellt: {out_path.name}")
+        with open(out_path, "rb") as f:
+            st.download_button(
+                "⬇️ Download .docx",
+                data=f,
+                file_name=out_path.name,
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            )
+
+        if show_debug:
+            with st.expander("🔎 Kontext (extrahierte Werte)", expanded=True):
+                st.json(extracted)
+
+        st.caption(f"Gespeichert in: {wb.OUTPUT_DIR}")
+
+    except Exception as e:
+        st.error(f"Fehler: {e}")
+        st.info("Tipp: OPENAI_API_KEY in Streamlit Secrets setzen. Und prüfen, ob PDF echten Text enthält (kein Scan ohne OCR).")
