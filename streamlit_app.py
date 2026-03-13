@@ -1,15 +1,10 @@
 from __future__ import annotations
 
 import json
-import os
-import re
 from datetime import date, timedelta, datetime
 from typing import Dict, Any, Set
 
 import streamlit as st
-import fitz  # PyMuPDF
-from openai import OpenAI
-
 import word_backend as wb
 
 
@@ -27,19 +22,14 @@ TEMPLATES = {
 
 
 # -----------------------------
-# Prompts (werden angezeigt & kopierbar via st.code)
-# Versicherung soll aus JSON kommen -> Prompt weist darauf hin.
+# Prompts (sichtbar + kopierbar via st.code)
 # -----------------------------
 PROMPTS = {
-    "Standard Schreiben": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown.
+    "Standard Schreiben": """Gib NUR JSON zurück (keine Erklärungen).
 Unbekannt -> "".
-Beträge im deutschen Format (z.B. 1.234,56).
-VORSTEUERBERECHTIGUNG-Regel: wenn im Text "ja" -> "" (leer), wenn "nein" -> "nicht".
-WICHTIG: Versicherungsdaten (VERSICHERUNG, VER_STRASSE, VER_ORT) NICHT ausfüllen (kommen aus separater JSON-Datei).
+VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
-JSON:
 {
-  "TEMPLATE": "standard",
   "MANDANT_NACHNAME": "",
   "MANDANT_VORNAME": "",
   "UNFALLE_STRASSE": "",
@@ -53,24 +43,20 @@ JSON:
   "VORSTEUERBERECHTIGUNG": "",
   "SCHADENHERGANG": "",
   "SCHADENSNUMMER": "",
+  "VERSICHERUNG": "",
+  "VER_STRASSE": "",
+  "VER_ORT": "",
   "WERTMINDERUNG": "",
   "REPARATURKOSTEN": "",
   "KOSTENPAUSCHALE": "",
-  "SACHVERST_KOSTEN": "",
-  "VERSICHERUNG": "",
-  "VER_STRASSE": "",
-  "VER_ORT": ""
+  "SACHVERST_KOSTEN": ""
 }
 """,
-    "130 Prozent": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown.
+    "130 Prozent": """Gib NUR JSON zurück (keine Erklärungen).
 Unbekannt -> "".
-Beträge im deutschen Format (z.B. 1.234,56).
-VORSTEUERBERECHTIGUNG-Regel: "ja" -> "" (leer), "nein" -> "nicht".
-WICHTIG: Versicherungsdaten NICHT ausfüllen (kommen aus separater JSON-Datei).
+VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
-JSON:
 {
-  "TEMPLATE": "130",
   "MANDANT_NACHNAME": "",
   "MANDANT_VORNAME": "",
   "UNFALLE_STRASSE": "",
@@ -84,27 +70,23 @@ JSON:
   "VORSTEUERBERECHTIGUNG": "",
   "SCHADENHERGANG": "",
   "SCHADENSNUMMER": "",
+  "VERSICHERUNG": "",
+  "VER_STRASSE": "",
+  "VER_ORT": "",
   "REPARATURKOSTEN": "",
   "MWST_BETRAG": "",
   "NUTZUNGSAUSFALL": "",
   "WIEDERBESCHAFFUNGSWERT": "",
   "RESTWERT": "",
   "ZUSATZKOSTEN_BEZEICHNUNG": "",
-  "ZUSATZKOSTEN_BETRAG": "",
-  "VERSICHERUNG": "",
-  "VER_STRASSE": "",
-  "VER_ORT": ""
+  "ZUSATZKOSTEN_BETRAG": ""
 }
 """,
-    "Totalschaden (konkret)": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown.
+    "Totalschaden (konkret)": """Gib NUR JSON zurück (keine Erklärungen).
 Unbekannt -> "".
-Beträge im deutschen Format (z.B. 1.234,56).
-VORSTEUERBERECHTIGUNG-Regel: "ja" -> "" (leer), "nein" -> "nicht".
-WICHTIG: Versicherungsdaten NICHT ausfüllen (kommen aus separater JSON-Datei).
+VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
-JSON:
 {
-  "TEMPLATE": "ts_konkret",
   "MANDANT_NACHNAME": "",
   "MANDANT_VORNAME": "",
   "UNFALLE_STRASSE": "",
@@ -118,26 +100,22 @@ JSON:
   "VORSTEUERBERECHTIGUNG": "",
   "SCHADENHERGANG": "",
   "SCHADENSNUMMER": "",
+  "VERSICHERUNG": "",
+  "VER_STRASSE": "",
+  "VER_ORT": "",
   "WIEDERBESCHAFFUNGSWERT": "",
   "WIEDERBESCHAFFUNGSAUFWAND": "",
   "RESTWERT": "",
   "ERSATZBESCHAFFUNG_MWST": "",
   "ZUSATZKOSTEN_BEZEICHNUNG": "",
-  "ZUSATZKOSTEN_BETRAG": "",
-  "VERSICHERUNG": "",
-  "VER_STRASSE": "",
-  "VER_ORT": ""
+  "ZUSATZKOSTEN_BETRAG": ""
 }
 """,
-    "Konkret unter WBW": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown.
+    "Konkret unter WBW": """Gib NUR JSON zurück (keine Erklärungen).
 Unbekannt -> "".
-Beträge im deutschen Format (z.B. 1.234,56).
-VORSTEUERBERECHTIGUNG-Regel: "ja" -> "" (leer), "nein" -> "nicht".
-WICHTIG: Versicherungsdaten NICHT ausfüllen (kommen aus separater JSON-Datei).
+VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
-JSON:
 {
-  "TEMPLATE": "konkret_unter_wbw",
   "MANDANT_NACHNAME": "",
   "MANDANT_VORNAME": "",
   "UNFALLE_STRASSE": "",
@@ -151,26 +129,22 @@ JSON:
   "VORSTEUERBERECHTIGUNG": "",
   "SCHADENHERGANG": "",
   "SCHADENSNUMMER": "",
+  "VERSICHERUNG": "",
+  "VER_STRASSE": "",
+  "VER_ORT": "",
   "REPARATURKOSTEN": "",
   "MWST_BETRAG": "",
   "WERTMINDERUNG": "",
   "NUTZUNGSAUSFALL": "",
   "ZUSATZKOSTEN_BEZEICHNUNG": "",
-  "ZUSATZKOSTEN_BETRAG": "",
-  "VERSICHERUNG": "",
-  "VER_STRASSE": "",
-  "VER_ORT": ""
+  "ZUSATZKOSTEN_BETRAG": ""
 }
 """,
-    "Totalschaden (fiktiv)": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown.
+    "Totalschaden (fiktiv)": """Gib NUR JSON zurück (keine Erklärungen).
 Unbekannt -> "".
-Beträge im deutschen Format (z.B. 1.234,56).
-VORSTEUERBERECHTIGUNG-Regel: "ja" -> "" (leer), "nein" -> "nicht".
-WICHTIG: Versicherungsdaten NICHT ausfüllen (kommen aus separater JSON-Datei).
+VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
-JSON:
 {
-  "TEMPLATE": "ts_fiktiv",
   "MANDANT_NACHNAME": "",
   "MANDANT_VORNAME": "",
   "UNFALLE_STRASSE": "",
@@ -184,26 +158,22 @@ JSON:
   "VORSTEUERBERECHTIGUNG": "",
   "SCHADENHERGANG": "",
   "SCHADENSNUMMER": "",
+  "VERSICHERUNG": "",
+  "VER_STRASSE": "",
+  "VER_ORT": "",
   "WIEDERBESCHAFFUNGSWERT": "",
   "WIEDERBESCHAFFUNGSAUFWAND": "",
   "NUTZUNGSAUSFALL": "",
   "RESTWERT": "",
   "ZUSATZKOSTEN_BEZEICHNUNG": "",
-  "ZUSATZKOSTEN_BETRAG": "",
-  "VERSICHERUNG": "",
-  "VER_STRASSE": "",
-  "VER_ORT": ""
+  "ZUSATZKOSTEN_BETRAG": ""
 }
 """,
-    "Schreiben Totalschaden": """Gib NUR gültiges JSON zurück. Keine Erklärungen, kein Markdown.
+    "Schreiben Totalschaden": """Gib NUR JSON zurück (keine Erklärungen).
 Unbekannt -> "".
-Beträge im deutschen Format (z.B. 1.234,56).
-VORSTEUERBERECHTIGUNG-Regel: "ja" -> "" (leer), "nein" -> "nicht".
-WICHTIG: Versicherungsdaten NICHT ausfüllen (kommen aus separater JSON-Datei).
+VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
-JSON:
 {
-  "TEMPLATE": "schreibentotalschaden",
   "MANDANT_NACHNAME": "",
   "MANDANT_VORNAME": "",
   "UNFALLE_STRASSE": "",
@@ -217,24 +187,13 @@ JSON:
   "VORSTEUERBERECHTIGUNG": "",
   "SCHADENHERGANG": "",
   "SCHADENSNUMMER": "",
-  "WIEDERBESCHAFFUNGSWERTAUFWAND": "",
   "VERSICHERUNG": "",
   "VER_STRASSE": "",
-  "VER_ORT": ""
+  "VER_ORT": "",
+  "WIEDERBESCHAFFUNGSWERTAUFWAND": ""
 }
 """,
 }
-
-
-# -----------------------------
-# Helpers
-# -----------------------------
-def pdf_bytes_to_text(pdf_bytes: bytes) -> str:
-    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-    parts = []
-    for i in range(doc.page_count):
-        parts.append(doc.load_page(i).get_text("text"))
-    return "\n".join(parts)
 
 
 def normalize_vorsteuer(value: str) -> str:
@@ -246,107 +205,56 @@ def normalize_vorsteuer(value: str) -> str:
     return value
 
 
-def standard_defaults(keys: Set[str]) -> Dict[str, str]:
+def default_values_for_keys(keys: Set[str]) -> Dict[str, str]:
     today = date.today().strftime("%d.%m.%Y")
     frist = (datetime.now() + timedelta(days=14)).strftime("%d.%m.%Y")
     out = {}
     if "HEUTDATUM" in keys:
         out["HEUTDATUM"] = today
-    # Falls deine Vorlage FRIST_DATUM nutzt -> hier anpassen:
     if "FIRST_DATUM" in keys:
         out["FIRST_DATUM"] = frist
+    if "FRIST_DATUM" in keys:
+        out["FRIST_DATUM"] = frist
     return out
 
 
-def build_json_schema(keys: Set[str]) -> str:
-    keys_sorted = sorted(keys)
-    lines = []
-    for i, k in enumerate(keys_sorted):
-        comma = "," if i < len(keys_sorted) - 1 else ""
-        lines.append(f'  "{k}": ""{comma}')
-    return "{\n" + "\n".join(lines) + "\n}"
-
-
-def build_extraction_prompt(keys: Set[str], pdf_text: str) -> str:
-    """
-    Prompt, den wir intern für die KI verwenden (nicht die UI-Prompts).
-    Wir sagen explizit: Versicherung aus JSON, daher leer lassen.
-    """
-    rules = (
-        "Gib NUR JSON zurück. Keine Erklärungen.\n"
-        "JSON muss ALLE Keys enthalten.\n"
-        "Unbekannt -> \"\".\n"
-        "VORSTEUERBERECHTIGUNG: ja -> \"\" (leer), nein -> \"nicht\".\n"
-        "Beträge möglichst deutsches Format (z.B. 1.234,56).\n"
-        "WICHTIG: Versicherungsdaten (VERSICHERUNG, VER_STRASSE, VER_ORT) NICHT ausfüllen -> \"\".\n"
-    )
-    schema = build_json_schema(keys)
-    return f"{rules}\nJSON-SCHEMA:\n{schema}\n\nPDF_TEXT:\n<<<\n{pdf_text}\n>>>"
-
-
-def openai_extract_json(keys: Set[str], pdf_text: str, model: str) -> Dict[str, Any]:
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
-    if not api_key:
-        raise RuntimeError("OPENAI_API_KEY fehlt (Streamlit Secrets oder Umgebungsvariable).")
-
-    client = OpenAI()
-    prompt = build_extraction_prompt(keys, pdf_text)
-
-    resp = client.responses.create(model=model, input=prompt)
-    text = getattr(resp, "output_text", None)
+def parse_json_text(text: str) -> Dict[str, Any]:
+    text = (text or "").strip()
     if not text:
-        raise RuntimeError("OpenAI Antwort enthält keinen output_text.")
-
-    # robustes JSON parsing
-    try:
-        data = json.loads(text)
-    except json.JSONDecodeError:
-        m = re.search(r"\{.*\}", text, re.DOTALL)
-        if not m:
-            raise
-        data = json.loads(m.group(0))
-
-    for k in keys:
-        data.setdefault(k, "")
-
-    if "VORSTEUERBERECHTIGUNG" in data:
-        data["VORSTEUERBERECHTIGUNG"] = normalize_vorsteuer(str(data.get("VORSTEUERBERECHTIGUNG", "")))
-
-    return data
-
-
-def load_insurance_json(uploaded_json_file) -> Dict[str, Any]:
-    """
-    Erwartet JSON-Datei mit z.B.:
-    {
-      "VERSICHERUNG": "Allianz ...",
-      "VER_STRASSE": "Musterstr. 1",
-      "VER_ORT": "10115 Berlin"
-    }
-    """
-    if uploaded_json_file is None:
         return {}
+    return json.loads(text)
 
-    raw = uploaded_json_file.read()
-    try:
-        data = json.loads(raw.decode("utf-8"))
-    except Exception:
-        # Fallback: manchmal kommt schon str
-        data = json.loads(raw)
 
-    # Nur die Versicherungskeys übernehmen
-    out = {}
+def build_context(keys: Set[str], main_json: Dict[str, Any], insurance_json: Dict[str, Any]) -> Dict[str, Any]:
+    ctx = {k: "" for k in keys}
+
+    # main json
+    for k in keys:
+        if k in main_json:
+            ctx[k] = main_json[k]
+
+    # defaults
+    for k, v in default_values_for_keys(keys).items():
+        if not str(ctx.get(k, "")).strip():
+            ctx[k] = v
+
+    # vorsteuer rule
+    if "VORSTEUERBERECHTIGUNG" in ctx:
+        ctx["VORSTEUERBERECHTIGUNG"] = normalize_vorsteuer(str(ctx.get("VORSTEUERBERECHTIGUNG", "")))
+
+    # insurance override (optional)
     for k in ["VERSICHERUNG", "VER_STRASSE", "VER_ORT"]:
-        if k in data and str(data[k]).strip():
-            out[k] = data[k]
-    return out
+        if k in insurance_json and str(insurance_json[k]).strip():
+            ctx[k] = insurance_json[k]
+
+    return ctx
 
 
 # -----------------------------
 # UI
 # -----------------------------
-st.set_page_config(page_title="PDF → Word (KI + Versicherungs-JSON)", layout="wide")
-st.title("PDF-Gutachten → Word-Vorlage (KI extrahiert, Versicherung aus JSON)")
+st.set_page_config(page_title="JSON → Word", layout="wide")
+st.title("Word-Vorlage aus JSON befüllen (JSON als Eingabefeld, ohne AI)")
 
 with st.expander("📁 Vorlagen im Repo", expanded=False):
     st.write(str(wb.VORLAGEN_DIR))
@@ -355,42 +263,34 @@ with st.expander("📁 Vorlagen im Repo", expanded=False):
 template_label = st.selectbox("Vorlage wählen", list(TEMPLATES.keys()))
 tpl_name, out_prefix = TEMPLATES[template_label]
 
-st.subheader("1) Dateien hochladen")
-pdf_file = st.file_uploader("Gutachten als PDF hochladen", type=["pdf"])
-insurance_json_file = st.file_uploader("Versicherung als JSON hochladen", type=["json"])
-
-st.subheader("2) Prompt-Auswahl (sichtbar & kopierbar)")
+st.subheader("1) Prompt-Auswahl (sichtbar & kopierbar)")
 prompt_choice = st.selectbox("Prompt wählen", list(PROMPTS.keys()), index=list(PROMPTS.keys()).index(template_label))
-st.code(PROMPTS[prompt_choice], language="text")  # zeigt Prompt + Copy-Icon
+st.code(PROMPTS[prompt_choice], language="json")
 
-st.subheader("3) KI Einstellungen")
-model = st.selectbox("OpenAI Modell", ["gpt-4o-mini", "gpt-4.1-mini", "gpt-4o"], index=0)
-show_debug = st.toggle("Debug: extrahierte Werte anzeigen", value=True)
+st.subheader("2) JSON Eingabe")
+default_json = "{}"
+json_text = st.text_area("Haupt-JSON (Paste hier rein)", height=260, value=default_json)
+
+st.subheader("3) Versicherung (optional separat, überschreibt)")
+insurance_text = st.text_area(
+    "Versicherung-JSON (optional; überschreibt VERSICHERUNG/VER_STRASSE/VER_ORT)",
+    height=140,
+    value='{\n  "VERSICHERUNG": "",\n  "VER_STRASSE": "",\n  "VER_ORT": ""\n}'
+)
+
+show_debug = st.toggle("Debug: Kontext anzeigen", value=True)
 
 st.divider()
 
-disabled = (pdf_file is None)
-if st.button("✅ PDF analysieren & Word erzeugen", type="primary", disabled=disabled):
+if st.button("✅ Word erzeugen", type="primary"):
     try:
-        pdf_bytes = pdf_file.read()
-        pdf_text = pdf_bytes_to_text(pdf_bytes)
+        main_json = parse_json_text(json_text)
+        insurance_json = parse_json_text(insurance_text)
 
-        # Keys aus Template (Backend ohne KI)
         keys = wb.get_template_vars(tpl_name)
+        ctx = build_context(keys, main_json, insurance_json)
 
-        # KI extrahiert alles (ohne Versicherung)
-        extracted = openai_extract_json(keys, pdf_text, model=model)
-
-        # Defaults für Datum/Frist
-        extracted.update({k: v for k, v in standard_defaults(keys).items() if not str(extracted.get(k, "")).strip()})
-
-        # Versicherung aus JSON überschreibt/ergänzt
-        ins = load_insurance_json(insurance_json_file)
-        for k, v in ins.items():
-            extracted[k] = v  # bewusst überschreiben
-
-        # Rendern
-        out_path = wb.render_word(tpl_name, extracted, out_prefix)
+        out_path = wb.render_word(tpl_name, ctx, out_prefix)
 
         st.success(f"Word erstellt: {out_path.name}")
         with open(out_path, "rb") as f:
@@ -402,11 +302,12 @@ if st.button("✅ PDF analysieren & Word erzeugen", type="primary", disabled=dis
             )
 
         if show_debug:
-            with st.expander("🔎 Kontext (extrahierte Werte)", expanded=True):
-                st.json(extracted)
+            with st.expander("🔎 Kontext (Debug)", expanded=True):
+                st.json(ctx)
 
         st.caption(f"Gespeichert in: {wb.OUTPUT_DIR}")
 
+    except json.JSONDecodeError as e:
+        st.error(f"JSON Fehler: {e}")
     except Exception as e:
         st.error(f"Fehler: {e}")
-        st.info("Tipp: OPENAI_API_KEY in Streamlit Secrets setzen. Und prüfen, ob PDF echten Text enthält (kein Scan ohne OCR).")
