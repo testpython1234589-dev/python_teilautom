@@ -431,7 +431,7 @@ def compute_kostensumme(main_json: Dict[str, Any], ctx: Dict[str, Any]) -> str:
         if parsed_direct is not None:
             return format_money(parsed_direct)
 
-    return format_money(total) if found_any else ""
+    return format_money(total " €") if found_any else ""
 
 
 def build_context(keys: Set[str], main_json: Dict[str, Any]) -> Dict[str, Any]:
