@@ -50,7 +50,7 @@ PROMPTS = {
     VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
    -Reparaturkosten=ggf. Schadenhöhe(Netto wert ohne Mwst.) 
     Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
-    -Nutzungsausfall berechne Entschädigungspreis/Tag * Tage(z.B. Dauer Reparatur)
+    
 Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
@@ -83,14 +83,14 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "KOSTENPAUSCHALE": "25,00 €",
   "GUTACHTERKOSTEN": "",
   "SONSTIGE": ""
-  "NUTZUNGSAUSFALL":""
+
 }
 """,
     "130 Prozent": """Gib NUR JSON zurück (keine Erklärungen).
     „VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
     -Reparaturkosten=ggf. Schadenhöhe(Netto wert ohne Mwst.) 
      Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
-     -Nutzungsausfall berechne Entschädigungspreis/Tag * Tage(z.B. Dauer Reparatur)
+     
      Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
