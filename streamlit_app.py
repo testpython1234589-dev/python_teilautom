@@ -9,6 +9,24 @@ from typing import Dict, Any, Set, Tuple
 import streamlit as st
 import word_backend as wb
 
+#unfallhergang text wird automatisch syntaktisch verbessert
+def normalize_schadenshergang_text(value: Any) -> str:
+    """
+    Entfernt Zeilenumbrüche und reduziert Leerzeichen,
+    damit der Schadenshergang platzsparend im Schreiben erscheint.
+    """
+    if value is None:
+        return ""
+
+    text = str(value)
+
+    # Zeilenumbrüche entfernen
+    text = text.replace("\r\n", " ").replace("\r", " ").replace("\n", " ")
+
+    # Mehrere Leerzeichen reduzieren
+    text = re.sub(r"\s+", " ", text)
+
+    return text.strip()
 
 # -----------------------------
 # Vorlagen
@@ -445,8 +463,13 @@ def build_context(keys: Set[str], main_json: Dict[str, Any]) -> Dict[str, Any]:
     ctx = {k: "" for k in keys}
 
     # 1) Exakte Keys / Alias-Mapping
-    for key in keys:
-        ctx[key] = normalize_text(get_value_for_key(key, main_json))
+  for key in keys:
+    value = get_value_for_key(key, main_json)
+
+    if key == "SCHADENHERGANG":
+        ctx[key] = normalize_schadenshergang_text(value)
+    else:
+        ctx[key] = normalize_text(value)
 
     # 2) Default-Werte
     for key, value in default_values_for_keys(keys).items():
