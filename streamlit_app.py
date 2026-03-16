@@ -170,6 +170,8 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
     "Konkret unter WBW": """Gib NUR JSON zurück (keine Erklärungen).
     „VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
      Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
+     -Mehrwertsteuer = 0 wenn Fiktive Rechnung
+     -Nutzungsausfall = 0 wenn Fiktive rechnung
      Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
