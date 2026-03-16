@@ -29,6 +29,7 @@ TEMPLATES = {
 PROMPTS = {
     
     "Standard Schreiben": """Gib NUR JSON zurück (keine Erklärungen).
+    VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
 Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
@@ -64,6 +65,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 }
 """,
     "130 Prozent": """Gib NUR JSON zurück (keine Erklärungen).
+    „VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
      Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
@@ -102,6 +104,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 }
 """,
     "Totalschaden (konkret)": """Gib NUR JSON zurück (keine Erklärungen).
+    „VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
      Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
@@ -139,6 +142,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 }
 """,
     "Konkret unter WBW": """Gib NUR JSON zurück (keine Erklärungen).
+    „VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
      Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
@@ -176,6 +180,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 }
 """,
     "Totalschaden (fiktiv)": """Gib NUR JSON zurück (keine Erklärungen).
+    „VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
      Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
@@ -213,6 +218,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 }
 """,
     "Schreiben Totalschaden": """Gib NUR JSON zurück (keine Erklärungen).
+    „VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
      Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
