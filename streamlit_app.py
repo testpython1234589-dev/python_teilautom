@@ -463,7 +463,7 @@ def build_context(keys: Set[str], main_json: Dict[str, Any]) -> Dict[str, Any]:
     ctx = {k: "" for k in keys}
 
     # 1) Exakte Keys / Alias-Mapping
-  for key in keys:
+for key in keys:
     value = get_value_for_key(key, main_json)
 
     if key == "SCHADENHERGANG":
