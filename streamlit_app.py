@@ -50,6 +50,7 @@ PROMPTS = {
     VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
    -Reparaturkosten=ggf. Schadenhöhe(Netto wert ohne Mwst.) 
     Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
+    -Sachverstädigerkosten: Gutachterkosten + Mwst bei Mandanten wenn nicht Vorsteuerabzug berechtigt
     
 Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
