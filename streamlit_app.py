@@ -463,13 +463,13 @@ def build_context(keys: Set[str], main_json: Dict[str, Any]) -> Dict[str, Any]:
     ctx = {k: "" for k in keys}
 
     # 1) Exakte Keys / Alias-Mapping
-for key in keys:
-    value = get_value_for_key(key, main_json)
+    for key in keys:
+        value = get_value_for_key(key, main_json)
 
-    if key == "SCHADENHERGANG":
-        ctx[key] = normalize_schadenshergang_text(value)
-    else:
-        ctx[key] = normalize_text(value)
+        if key == "SCHADENHERGANG":
+            ctx[key] = normalize_schadenshergang_text(value)
+        else:
+            ctx[key] = normalize_text(value)
 
     # 2) Default-Werte
     for key, value in default_values_for_keys(keys).items():
@@ -488,7 +488,7 @@ for key in keys:
     if "KOSTENSUMME" in ctx and not normalize_text(ctx["KOSTENSUMME"]):
         ctx["KOSTENSUMME"] = compute_kostensumme(main_json, ctx)
 
-return ctx
+    return ctx
 
 
 def analyze_context(keys: Set[str], main_json: Dict[str, Any], ctx: Dict[str, Any]) -> Dict[str, Any]:
