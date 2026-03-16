@@ -488,7 +488,7 @@ for key in keys:
     if "KOSTENSUMME" in ctx and not normalize_text(ctx["KOSTENSUMME"]):
         ctx["KOSTENSUMME"] = compute_kostensumme(main_json, ctx)
 
-    return ctx
+return ctx
 
 
 def analyze_context(keys: Set[str], main_json: Dict[str, Any], ctx: Dict[str, Any]) -> Dict[str, Any]:
