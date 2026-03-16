@@ -33,6 +33,8 @@ Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Sei
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
 {
+  "GEGNER_Nachname":"",
+  "KENNZEICHEN_GEGNER":"",
   "MANDANT_NACHNAME": "",
   "MANDANT_VORNAME": "",
   "MANDANT_STRASSE": "",
@@ -56,7 +58,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
   "WERTMINDERUNG": "",
   "REPARATURKOSTEN": "",
-  "KOSTENPAUSCHALE": "",
+  "KOSTENPAUSCHALE": "25,00€",
   "GUTACHTERKOSTEN": "",
   "SONSTIGE": ""
 }
@@ -67,6 +69,8 @@ Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
 {
+ "GEGNER_Nachname":"",
+  "KENNZEICHEN_GEGNER":"",
   "MANDANT_NACHNAME": "",
   "MANDANT_VORNAME": "",
   "MANDANT_STRASSE": "",
@@ -103,6 +107,8 @@ Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
 {
+ "GEGNER_Nachname":"",
+  "KENNZEICHEN_GEGNER":"",
   "MANDANT_NACHNAME": "",
   "MANDANT_VORNAME": "",
   "MANDANT_STRASSE": "",
@@ -138,6 +144,8 @@ Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
 {
+ "GEGNER_Nachname":"",
+  "KENNZEICHEN_GEGNER":"",
   "MANDANT_NACHNAME": "",
   "MANDANT_VORNAME": "",
   "MANDANT_STRASSE": "",
@@ -173,6 +181,8 @@ Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
 {
+ "GEGNER_Nachname":"",
+  "KENNZEICHEN_GEGNER":"",
   "MANDANT_NACHNAME": "",
   "MANDANT_VORNAME": "",
   "MANDANT_STRASSE": "",
@@ -208,6 +218,8 @@ Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
 {
+ "GEGNER_Nachname":"",
+  "KENNZEICHEN_GEGNER":"",
   "MANDANT_NACHNAME": "",
   "MANDANT_VORNAME": "",
   "MANDANT_STRASSE": "",
