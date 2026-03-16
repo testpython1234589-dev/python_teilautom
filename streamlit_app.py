@@ -48,7 +48,7 @@ PROMPTS = {
     
     "Standard Schreiben": """Gib NUR JSON zurück (keine Erklärungen).
     VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
-    -Reparaturkosten=Reparaturkosten-Wertminderung+Wertbesserung bzw. entnehme ggf. Schadenhöhe(Netto wert ohne Mwst.)
+   -Reparaturkosten=ggf. Schadenhöhe(Netto wert ohne Mwst.) 
     Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
     -Nutzungsausfall berechne Entschädigungspreis/Tag * Tage(z.B. Dauer Reparatur)
 Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
@@ -88,7 +88,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 """,
     "130 Prozent": """Gib NUR JSON zurück (keine Erklärungen).
     „VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
-    -Reparaturkosten=Reparaturkosten-Wertminderung+Wertbesserung bzw. entnehme ggf. Schadenhöhe(Netto wert ohne Mwst.)
+    -Reparaturkosten=ggf. Schadenhöhe(Netto wert ohne Mwst.) 
      Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
      -Nutzungsausfall berechne Entschädigungspreis/Tag * Tage(z.B. Dauer Reparatur)
      Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
