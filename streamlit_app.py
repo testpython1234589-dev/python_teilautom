@@ -345,13 +345,14 @@ def parse_money(value: Any) -> Decimal | None:
 
 def format_money(value: Decimal | None) -> str:
     """
-    Ausgabe deutsch: 1.234,56
+    Ausgabe deutsch: 1.234,56 €
     """
     if value is None:
         return ""
     q = value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
     raw = f"{q:,.2f}"  # 1,234.56
-    return raw.replace(",", "X").replace(".", ",").replace("X", ".")
+    formatted = raw.replace(",", "X").replace(".", ",").replace("X", ".")
+    return f"{formatted} €"
 
 
 def default_values_for_keys(keys: Set[str]) -> Dict[str, str]:
