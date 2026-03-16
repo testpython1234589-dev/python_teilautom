@@ -393,6 +393,40 @@ def default_values_for_keys(keys: Set[str]) -> Dict[str, str]:
     return out
 
 
+def escape_newlines_in_json_strings(text: str) -> str:
+    """
+    Macht ungültiges JSON toleranter:
+    echte Zeilenumbrüche innerhalb von String-Werten
+    werden in \\n umgewandelt.
+    """
+    result = []
+    in_string = False
+    escaped = False
+
+    for ch in text:
+        if escaped:
+            result.append(ch)
+            escaped = False
+            continue
+
+        if ch == "\\":
+            result.append(ch)
+            escaped = True
+            continue
+
+        if ch == '"':
+            result.append(ch)
+            in_string = not in_string
+            continue
+
+        if in_string and ch in "\r\n":
+            result.append("\\n")
+            continue
+
+        result.append(ch)
+
+    return "".join(result)
+
 def parse_json_text(text: str) -> Dict[str, Any]:
     text = (text or "").strip()
     if not text:
@@ -402,6 +436,9 @@ def parse_json_text(text: str) -> Dict[str, Any]:
     # entfernt ```json ... ```
     text = re.sub(r"^\s*```(?:json)?\s*", "", text, flags=re.IGNORECASE)
     text = re.sub(r"\s*```\s*$", "", text)
+
+    # Roh-Zeilenumbrüche innerhalb von JSON-Strings in \n umwandeln
+    text = escape_newlines_in_json_strings(text)
 
     return json.loads(text)
 
