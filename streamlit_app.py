@@ -261,33 +261,33 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
-{
- "GEGNER_Nachname":"",
-  "KENNZEICHEN_GEGNER":"",
-  "MANDANT_NACHNAME": "",
-  "MANDANT_VORNAME": "",
-  "MANDANT_STRASSE": "",
-  "MANDANT_PLZ_ORT": "",
-
-  "UNFALL_DATUM": "",
-  "UNFALL_ORT": "",
-  "UNFALL_STRASSE": "",
-
-  "AKTENZEICHEN": "",
-  "FAHRZEUGTYP": "",
-  "KENNZEICHEN": "",
-  "VORSTEUERBERECHTIGUNG": "",
-
-  "SCHADENHERGANG": "",
-  "SCHADENSNUMMER": "",
-
-  "VERSICHERUNG": "",
-  "VER_STRASSE": "",
-  "VER_ORT": "",
-
-  "WIEDERBESCHAFFUNGSWERTAUFWAND": ""
-}
-""",
+    {
+     "GEGNER_Nachname":"",
+      "KENNZEICHEN_GEGNER":"",
+      "MANDANT_NACHNAME": "",
+      "MANDANT_VORNAME": "",
+      "MANDANT_STRASSE": "",
+      "MANDANT_PLZ_ORT": "",
+    
+      "UNFALL_DATUM": "",
+      "UNFALL_ORT": "",
+      "UNFALL_STRASSE": "",
+    
+      "AKTENZEICHEN": "",
+      "FAHRZEUGTYP": "",
+      "KENNZEICHEN": "",
+      "VORSTEUERBERECHTIGUNG": "",
+    
+      "SCHADENHERGANG": "",
+      "SCHADENSNUMMER": "",
+    
+      "VERSICHERUNG": "",
+      "VER_STRASSE": "",
+      "VER_ORT": "",
+    
+      "WIEDERBESCHAFFUNGSWERTAUFWAND": ""
+    }
+    """,
 }
 
 
