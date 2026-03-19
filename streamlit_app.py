@@ -80,6 +80,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "VERSICHERUNG": "",
   "VER_STRASSE": "",
   "VER_ORT": "",
+  "GENDERN":"",
 
   "WERTMINDERUNG": "",
   "REPARATURKOSTEN": "",
@@ -251,6 +252,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "FAHRZEUGTYP": "",
   "KENNZEICHEN": "",
   "VORSTEUERBERECHTIGUNG": "",
+  "GENDERN":"",
 
   "SCHADENHERGANG": "",
   "SCHADENSNUMMER": "",
