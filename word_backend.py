@@ -36,23 +36,34 @@ def get_template_path(tpl_name: str) -> Path:
 
 
 def get_template_vars(tpl_name: str) -> Set[str]:
+    """Liest die in der Word-Vorlage verwendeten Variablen aus."""
     tpl_path = get_template_path(tpl_name)
     tpl = DocxTemplate(str(tpl_path))
     return set(tpl.get_undeclared_template_variables() or [])
 
 
-# 🔥 NEU: Cleanup-Funktion
-def cleanup_doc(doc: Document):
+# 🔥 NEU: NUR Tabellen bereinigen
+def cleanup_empty_table_rows(doc: Document):
     """
-    Entfernt leere Absätze komplett → kein Abstand, kein Leerraum
+    Löscht NUR Tabellenzeilen, wenn alle Zellen leer sind.
+    Alles außerhalb der Tabelle bleibt unberührt.
     """
-    for para in doc.paragraphs:
-        if not para.text.strip():
-            p = para._element
-            p.getparent().remove(p)
+    for table in doc.tables:
+        rows_to_delete = []
+
+        for row in table.rows:
+            texts = [cell.text.strip() for cell in row.cells]
+
+            # wenn ALLE Zellen leer → löschen
+            if all(t == "" for t in texts):
+                rows_to_delete.append(row)
+
+        for row in rows_to_delete:
+            table._element.remove(row._element)
 
 
 def render_word(tpl_name: str, context: Dict[str, Any], out_prefix: str) -> Path:
+    """Rendert die Word-Vorlage mit context und speichert im Output-Ordner."""
     tpl_path = get_template_path(tpl_name)
 
     tpl = DocxTemplate(str(tpl_path))
@@ -65,9 +76,9 @@ def render_word(tpl_name: str, context: Dict[str, Any], out_prefix: str) -> Path
 
     tpl.save(str(out_path))
 
-    # 🔥 NEU: Dokument nachbearbeiten
+    # 🔥 NEU: nur Tabellen bereinigen
     doc = Document(str(out_path))
-    cleanup_doc(doc)
+    cleanup_empty_table_rows(doc)
     doc.save(str(out_path))
 
     return out_path
