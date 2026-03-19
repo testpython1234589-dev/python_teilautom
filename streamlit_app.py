@@ -473,10 +473,6 @@ def get_value_for_key(target_key: str, main_json: Dict[str, Any]) -> Any:
 
 
 def compute_kostensumme(main_json: Dict[str, Any], ctx: Dict[str, Any]) -> str:
-    """
-    Berechnet KOSTENSUMME_X aus Standard-Schadenpositionen.
-    Doppelte Zählung von GUTACHTERKOSTEN/SACHVERST_KOSTEN wird vermieden.
-    """
     total = Decimal("0.00")
     found_any = False
     already_counted = set()
@@ -492,10 +488,16 @@ def compute_kostensumme(main_json: Dict[str, Any], ctx: Dict[str, Any]) -> str:
             continue
 
         already_counted.add(canonical)
-        total += parsed
+
+        # 🔥 HIER DIE LOGIK
+        if key == "WERTBESSERUNG_BETRAG":
+            total -= parsed   # ➖ wird abgezogen
+        else:
+            total += parsed   # ➕ alles andere wird addiert
+
         found_any = True
 
-    # Falls jemand KOSTENSUMME/KOSTENSUMME_X direkt liefert, hat das Vorrang
+    # vorhandene manuelle Summe hat Vorrang
     direct_sum = (
         normalize_text(main_json.get("KOSTENSUMME_X", ""))
         or normalize_text(main_json.get("KOSTENSUMME", ""))
