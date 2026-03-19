@@ -47,15 +47,16 @@ TEMPLATES = {
 PROMPTS = {
     Gib NUR JSON zurück (keine Erklärungen).
         VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
-       -Reparaturkosten= Schadenhöhe(Netto wert ohne Mwst.) bzw. (=Reparaturkosten + Wertminderung - Werterhöhung=
-        Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
+       -Reparaturkosten= Schadenhöhe(Netto wert ohne Mwst.) bzw. (=Reparaturkosten + Wertminderung - Werterhöhung)
+        -Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
         -Sachverstädigerkosten: Gutachterkosten + Mwst bei Mandanten wenn nicht Vorsteuerabzug berechtigt
         
     Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
     VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
     
-    {
-      "GEGNER_Nachname":"",
+    
+{
+          "GEGNER_Nachname":"",
       "KENNZEICHEN_GEGNER":"",
       "MANDANT_NACHNAME": "",
       "MANDANT_VORNAME": "",
@@ -83,11 +84,12 @@ PROMPTS = {
       "KOSTENPAUSCHALE": "25,00 €",
       "GUTACHTERKOSTEN": "",
       "SONSTIGE": ""
+}
+
+  
+
 
  }
-
-
-}
 """,
        Gib NUR JSON zurück (keine Erklärungen).
         VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
