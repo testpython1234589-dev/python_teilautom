@@ -221,7 +221,7 @@ VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vol
 Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
 -BEACHTE: WIEDERBESCHAFFUNGSWERTAUFWAND = (Wiederbeschaffungswert - Restwert)
 -Falls Keine Abmelde/-Ummeldekosten (MELDEKOSTEN) vorhanden sind so ist : 0,00 € (zu kennzeichnen)
--Falls Zusätzliche kosten Vorhanden (ZUSATZKOSTEN_Bezeichnung/_-Betrag) sind so nehmen leerstelle mit bezeichnung: Name, und Betrag:geld betrag
+-Falls Zusätzliche kosten Vorhanden (ZUSATZKOSTEN_Bezeichnung/_-Betrag) sind so nehmen leerstelle mit bezeichnung: Name, und Betrag:geld betrag (Unter Sonderkosten!, Keine Dopplung!->Z:B Abmelde-/Ummeldekosten)
 
 Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 
