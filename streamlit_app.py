@@ -45,10 +45,9 @@ TEMPLATES = {
 # Prompts
 # -----------------------------
 PROMPTS = {
-    
-    "Standard Schreiben": """Gib NUR JSON zurück (keine Erklärungen).
+Gib NUR JSON zurück (keine Erklärungen).
     VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
-   -Reparaturkosten=ggf. Schadenhöhe(Netto wert ohne Mwst.) 
+   -Reparaturkosten= Schadenhöhe(Netto wert ohne Mwst.) bzw. (=Reparaturkosten + Wertminderung - Werterhöhung=
     Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
     -Sachverstädigerkosten: Gutachterkosten + Mwst bei Mandanten wenn nicht Vorsteuerabzug berechtigt
     
@@ -86,18 +85,21 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "SONSTIGE": ""
 
 }
+
+
+}
 """,
-    "130 Prozent": """Gib NUR JSON zurück (keine Erklärungen).
-    „VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
-    -Reparaturkosten=ggf. Schadenhöhe(Netto wert ohne Mwst.) 
-     Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
-     
-     Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
-Unbekannt -> "".
+   Gib NUR JSON zurück (keine Erklärungen).
+    VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
+   -Reparaturkosten= Schadenhöhe(Netto wert ohne Mwst.) bzw. (=Reparaturkosten + Wertminderung - Werterhöhung=
+    Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
+    -Sachverstädigerkosten: Gutachterkosten + Mwst bei Mandanten wenn nicht Vorsteuerabzug berechtigt
+    
+Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
 {
- "GEGNER_Nachname":"",
+  "GEGNER_Nachname":"",
   "KENNZEICHEN_GEGNER":"",
   "MANDANT_NACHNAME": "",
   "MANDANT_VORNAME": "",
@@ -120,13 +122,14 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "VER_STRASSE": "",
   "VER_ORT": "",
 
+  "WERTMINDERUNG": "",
   "REPARATURKOSTEN": "",
-  "MWST_BETRAG": "",
-  "NUTZUNGSAUSFALL": "",
-  "WIEDERBESCHAFFUNGSWERT": "",
-  "RESTWERT": "",
-  "ZUSATZKOSTEN_BEZEICHNUNG": "",
-  "ZUSATZKOSTEN_BETRAG": ""
+  "KOSTENPAUSCHALE": "25,00 €",
+  "GUTACHTERKOSTEN": "",
+  "SONSTIGE": ""
+
+}
+
 }
 """,
     "Totalschaden (konkret)": """Gib NUR JSON zurück (keine Erklärungen).
