@@ -220,6 +220,8 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
 Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
 -BEACHTE: WIEDERBESCHAFFUNGSWERTAUFWAND = (Wiederbeschaffungswert - Restwert)
+-Falls Keine Abmelde/-Ummeldekosten vorhanden sind so ist : 0,00 € (zu kennzeichnen)
+-Falls Zusätzliche kosten Vorhanden sind so nehmen leerstelle mit bezeichnung: Name, und Betrag:geld betrag
 
 Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 
