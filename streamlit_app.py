@@ -52,6 +52,8 @@ VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vol
 -Sachverständigerkosten: Gutachterkosten + Mwst bei Mandanten wenn nicht Vorsteuerabzug berechtigt
 -wenn wertminderung/besserung, nicht vorhanden lösche die Zeile/-n
 -GENDEREN feld: je nachdem Frau:ihrer, Mann:seiner
+-Wertminderung: Name: , Betrag für leerstellen (falls kein spezielle Bezeichnung dann Wertminderung)
+-Wertbesserung: Name: , Betrag für leerstellen (falls kein spezielle Bezeichnung dann Wertbesserung, die Zahl soll negative sein mit minus davor)
 Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
@@ -83,6 +85,10 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "REPARATURKOSTEN": "",
   "KOSTENPAUSCHALE": "25,00 €",
   "GUTACHTERKOSTEN": "",
+  "WERTMINDERUNG_NAME":"",
+  "WERTMINDERUNG_BETRAG":"",
+  "WERTBESSERUNG_NAME":"",
+  "WERTBESSERUNG_BETRAG":"",
   "SONSTIGE": ""
 }
 """,
@@ -300,8 +306,10 @@ SUM_CANDIDATES = (
     "SACHVERST_KOSTEN",
     "SONSTIGE",
     "NUTZUNGSAUSFALL",
-    "ZUSATZKOSTEN_BETRAG"
-    "MELDEKOSTEN"
+    "ZUSATZKOSTEN_BETRAG",
+    "MELDEKOSTEN",
+    "WERTMINDERUNG_BETRAG",
+    "WERTBESSERUNG_BETRAG",
 )
 
 
