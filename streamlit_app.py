@@ -54,7 +54,7 @@ VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vol
 -wenn wertminderung/besserung, nicht vorhanden lösche die Zeile/-n
 -GENDEREN feld: je nachdem Frau:ihrer, Mann:seiner
 -Wertminderung: Name: , Betrag für leerstellen (falls kein spezielle Bezeichnung dann Wertminderung)
--Wertverbesserung: Name: , Betrag für leerstellen (falls kein spezielle Bezeichnung dann Wertverbesserung, die Zahl soll negative sein mit minus davor)
+-Wertverbesserung: Name: , Betrag für leerstellen (falls kein spezielle Bezeichnung dann Wertverbesserung)
 Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
@@ -90,7 +90,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "WERTMINDERUNG_NAME":"",
   "WERTMINDERUNG_BETRAG":"",
   "WERTVERBESSERUNG_NAME":"",
-  "WERTBESSERUNG_BETRAG":"",
+  "WERTVERBESSERUNG_BETRAG":"",
   "SONSTIGE": ""
 }
 """,
