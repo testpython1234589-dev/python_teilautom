@@ -45,51 +45,51 @@ TEMPLATES = {
 # Prompts
 # -----------------------------
 PROMPTS = {
-    "Gib NUR JSON zurück (keine Erklärungen).
-        VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
-       -Reparaturkosten= Schadenhöhe(Netto wert ohne Mwst.) bzw. (=Reparaturkosten + Wertminderung - Werterhöhung)
-        -Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
-        -Sachverstädigerkosten: Gutachterkosten + Mwst bei Mandanten wenn nicht Vorsteuerabzug berechtigt
-        
-    Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
-    VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
-    
-    
+   PROMPTS = {
+    "Standard Schreiben": """Gib NUR JSON zurück (keine Erklärungen).
+
+VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
+- Reparaturkosten = Schadenhöhe (Netto ohne MwSt.) bzw. (= Reparaturkosten + Wertminderung - Werterhöhung)
+- Fahrzeugtyp: nur Name + Modellbezeichnung
+- Sachverständigerkosten: Gutachterkosten + MwSt bei Mandanten ohne Vorsteuerabzug
+
+Unbekannt -> "".
+Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
+
+VORSTEUERBERECHTIGUNG:
+JA -> "" (leer)
+NEIN -> "nicht"
+
 {
-          "GEGNER_Nachname":"",
-      "KENNZEICHEN_GEGNER":"",
-      "MANDANT_NACHNAME": "",
-      "MANDANT_VORNAME": "",
-      "MANDANT_STRASSE": "",
-      "MANDANT_PLZ_ORT": "",
-    
-      "UNFALL_DATUM": "",
-      "UNFALL_ORT": "",
-      "UNFALL_STRASSE": "",
-    
-      "AKTENZEICHEN": "",
-      "FAHRZEUGTYP": "",
-      "KENNZEICHEN": "",
-      "VORSTEUERBERECHTIGUNG": "",
-    
-      "SCHADENHERGANG": "",
-      "SCHADENSNUMMER": "",
-    
-      "VERSICHERUNG": "",
-      "VER_STRASSE": "",
-      "VER_ORT": "",
-    
-      "WERTMINDERUNG": "",
-      "REPARATURKOSTEN": "",
-      "KOSTENPAUSCHALE": "25,00 €",
-      "GUTACHTERKOSTEN": "",
-      "SONSTIGE": "" "
+  "GEGNER_Nachname":"",
+  "KENNZEICHEN_GEGNER":"",
+  "MANDANT_NACHNAME": "",
+  "MANDANT_VORNAME": "",
+  "MANDANT_STRASSE": "",
+  "MANDANT_PLZ_ORT": "",
+
+  "UNFALL_DATUM": "",
+  "UNFALL_ORT": "",
+  "UNFALL_STRASSE": "",
+
+  "AKTENZEICHEN": "",
+  "FAHRZEUGTYP": "",
+  "KENNZEICHEN": "",
+  "VORSTEUERBERECHTIGUNG": "",
+
+  "SCHADENHERGANG": "",
+  "SCHADENSNUMMER": "",
+
+  "VERSICHERUNG": "",
+  "VER_STRASSE": "",
+  "VER_ORT": "",
+
+  "WERTMINDERUNG": "",
+  "REPARATURKOSTEN": "",
+  "KOSTENPAUSCHALE": "25,00 €",
+  "GUTACHTERKOSTEN": "",
+  "SONSTIGE": ""
 }
-
-  
-
-
- }
 """,
       " Gib NUR JSON zurück (keine Erklärungen).
         VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
