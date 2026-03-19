@@ -48,7 +48,7 @@ PROMPTS = {
     "Standard Schreiben": """Gib NUR JSON zurück (keine Erklärungen).
     -Zum Vornamen entweder Herr bzw Frau je zu geschlechts zuordnung des Vornamens 
 VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
--Reparaturkosten= Schadenhöhe(Netto wert ohne Mwst.) bzw. (=Reparaturkosten + Wertminderung - Werterhöhung)
+-Reparaturkosten=  (=Reparaturkosten + Wertminderung - Werterhöhung)
 -Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
 -Sachverständigerkosten: Gutachterkosten + Mwst bei Mandanten wenn nicht Vorsteuerabzug berechtigt
 -wenn wertminderung/besserung, nicht vorhanden lösche die Zeile/-n
