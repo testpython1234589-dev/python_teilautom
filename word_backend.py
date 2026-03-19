@@ -5,6 +5,7 @@ from typing import Set, Dict, Any
 from datetime import datetime
 
 from docxtpl import DocxTemplate
+from docx import Document  # 🔥 NEU
 
 # Repo-Root ist Vorlagen-Ordner
 BASE_DIR = Path(__file__).resolve().parent
@@ -35,14 +36,23 @@ def get_template_path(tpl_name: str) -> Path:
 
 
 def get_template_vars(tpl_name: str) -> Set[str]:
-    """Liest die in der Word-Vorlage verwendeten Variablen aus."""
     tpl_path = get_template_path(tpl_name)
     tpl = DocxTemplate(str(tpl_path))
     return set(tpl.get_undeclared_template_variables() or [])
 
 
+# 🔥 NEU: Cleanup-Funktion
+def cleanup_doc(doc: Document):
+    """
+    Entfernt leere Absätze komplett → kein Abstand, kein Leerraum
+    """
+    for para in doc.paragraphs:
+        if not para.text.strip():
+            p = para._element
+            p.getparent().remove(p)
+
+
 def render_word(tpl_name: str, context: Dict[str, Any], out_prefix: str) -> Path:
-    """Rendert die Word-Vorlage mit context und speichert im Output-Ordner."""
     tpl_path = get_template_path(tpl_name)
 
     tpl = DocxTemplate(str(tpl_path))
@@ -54,4 +64,10 @@ def render_word(tpl_name: str, context: Dict[str, Any], out_prefix: str) -> Path
     out_path = OUTPUT_DIR / out_name
 
     tpl.save(str(out_path))
+
+    # 🔥 NEU: Dokument nachbearbeiten
+    doc = Document(str(out_path))
+    cleanup_doc(doc)
+    doc.save(str(out_path))
+
     return out_path
