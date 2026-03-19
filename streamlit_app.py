@@ -45,7 +45,7 @@ TEMPLATES = {
 # Prompts
 # -----------------------------
 PROMPTS = {
-    Gib NUR JSON zurück (keine Erklärungen).
+    "Gib NUR JSON zurück (keine Erklärungen).
         VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
        -Reparaturkosten= Schadenhöhe(Netto wert ohne Mwst.) bzw. (=Reparaturkosten + Wertminderung - Werterhöhung)
         -Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
@@ -83,7 +83,7 @@ PROMPTS = {
       "REPARATURKOSTEN": "",
       "KOSTENPAUSCHALE": "25,00 €",
       "GUTACHTERKOSTEN": "",
-      "SONSTIGE": ""
+      "SONSTIGE": "" "
 }
 
   
@@ -91,7 +91,7 @@ PROMPTS = {
 
  }
 """,
-       Gib NUR JSON zurück (keine Erklärungen).
+      " Gib NUR JSON zurück (keine Erklärungen).
         VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
        -Reparaturkosten= Schadenhöhe(Netto wert ohne Mwst.) bzw. (=Reparaturkosten + Wertminderung - Werterhöhung=
         Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
@@ -128,7 +128,7 @@ PROMPTS = {
       "REPARATURKOSTEN": "",
       "KOSTENPAUSCHALE": "25,00 €",
       "GUTACHTERKOSTEN": "",
-      "SONSTIGE": ""
+      "SONSTIGE": "" "
     
      }
 
