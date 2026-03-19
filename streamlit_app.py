@@ -121,6 +121,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "WIEDERBESCHAFFUNGSWERT": "",
   "WIEDERBESCHAFFUNGSAUFWAND": "",
   "RESTWERT": "",
+  "KOSTENPAUSCHALE": "25,00 €",
   "ERSATZBESCHAFFUNG_MWST": "",
   "ZUSATZKOSTEN_BEZEICHNUNG": "",
   "ZUSATZKOSTEN_BETRAG": ""
@@ -164,6 +165,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "VER_ORT": "",
 
   "REPARATURKOSTEN": "",
+  "KOSTENPAUSCHALE": "25,00 €",
   "MWST_BETRAG": "",
   "WERTMINDERUNG": "",
   "NUTZUNGSAUSFALL": "",
@@ -217,6 +219,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
     "Schreiben Totalschaden": """Gib NUR JSON zurück (keine Erklärungen).
 VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
 Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
+-BEACHTE: WIEDERBESCHAFFUNGSWERTAUFWAND = (Wiederbeschaffungswert - Restwert)
 
 Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 
@@ -247,7 +250,10 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "VER_STRASSE": "",
   "VER_ORT": "",
 
-  "WIEDERBESCHAFFUNGSWERTAUFWAND": ""
+  "WIEDERBESCHAFFUNGSWERTAUFWAND": "";
+  "KOSTENPAUSCHALE": "25,00 €",
+  "GUTACHTERKOSTEN":"",
+  "MELDUNGSKOSTEN":""
 }
 """
 }
@@ -271,13 +277,15 @@ ALIASES: Dict[str, Tuple[str, ...]] = {
 
 # Für automatische Kostensumme im Standard-Schreiben
 SUM_CANDIDATES = (
-    "WERTMINDERUNG",
+    "WIEDERBESCHAFFUNGSWERTAUFWAND",
     "REPARATURKOSTEN",
     "KOSTENPAUSCHALE",
     "GUTACHTERKOSTEN",
     "SACHVERST_KOSTEN",
     "SONSTIGE",
-    "NUTZUNGSAUSFALL"
+    "NUTZUNGSAUSFALL",
+    "WIEDERBESCHAFFUNGSWERTAUFWAND",
+    "ZUSATZKOSTEN_BETRAG"
 )
 
 
