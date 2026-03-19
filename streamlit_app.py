@@ -288,7 +288,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
       "WIEDERBESCHAFFUNGSWERTAUFWAND": ""
     }
     """,
-}
+   }
 
 
 # -----------------------------
