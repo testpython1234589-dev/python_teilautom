@@ -46,6 +46,7 @@ TEMPLATES = {
 # -----------------------------
 PROMPTS = {
     "Standard Schreiben": """Gib NUR JSON zurück (keine Erklärungen).
+    -Zum Vornamen entweder Herr bzw Frau je zu geschlechts zuordnung des Vornamens 
 VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
 -Reparaturkosten= Schadenhöhe(Netto wert ohne Mwst.) bzw. (=Reparaturkosten + Wertminderung - Werterhöhung)
 -Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
@@ -225,6 +226,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 """,
 
     "Schreiben Totalschaden": """Gib NUR JSON zurück (keine Erklärungen).
+     -Zum Vornamen entweder Herr bzw Frau je zu geschlechts zuordnung des Vornamens 
 VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
 Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
 -BEACHTE: WIEDERBESCHAFFUNGSWERTAUFWAND = (Wiederbeschaffungswert - Restwert)
