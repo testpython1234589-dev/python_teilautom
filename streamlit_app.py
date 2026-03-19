@@ -46,7 +46,7 @@ TEMPLATES = {
 # -----------------------------
 PROMPTS = {
     "Standard Schreiben": """Gib NUR JSON zurück (keine Erklärungen).
-    -Zum Vornamen entweder Herr bzw Frau je zu geschlechts zuordnung des Vornamens 
+    -Zum Vornamen entweder Herr bzw Frau je zu geschlechts zuordnung des Vornamens (keine Halluzination logik! z.B. bei GMBH keine frau oder Herr sondern einfach nur Name etc.)
 VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
 -Reparaturkosten ohne Mwst.
 -Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
