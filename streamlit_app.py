@@ -45,20 +45,14 @@ TEMPLATES = {
 # Prompts
 # -----------------------------
 PROMPTS = {
-   PROMPTS = {
     "Standard Schreiben": """Gib NUR JSON zurück (keine Erklärungen).
-
 VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
-- Reparaturkosten = Schadenhöhe (Netto ohne MwSt.) bzw. (= Reparaturkosten + Wertminderung - Werterhöhung)
-- Fahrzeugtyp: nur Name + Modellbezeichnung
-- Sachverständigerkosten: Gutachterkosten + MwSt bei Mandanten ohne Vorsteuerabzug
+-Reparaturkosten= Schadenhöhe(Netto wert ohne Mwst.) bzw. (=Reparaturkosten + Wertminderung - Werterhöhung)
+-Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
+-Sachverständigerkosten: Gutachterkosten + Mwst bei Mandanten wenn nicht Vorsteuerabzug berechtigt
 
-Unbekannt -> "".
-Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
-
-VORSTEUERBERECHTIGUNG:
-JA -> "" (leer)
-NEIN -> "nicht"
+Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
+VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
 {
   "GEGNER_Nachname":"",
@@ -91,53 +85,12 @@ NEIN -> "nicht"
   "SONSTIGE": ""
 }
 """,
-      " Gib NUR JSON zurück (keine Erklärungen).
-        VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
-       -Reparaturkosten= Schadenhöhe(Netto wert ohne Mwst.) bzw. (=Reparaturkosten + Wertminderung - Werterhöhung=
-        Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
-        -Sachverstädigerkosten: Gutachterkosten + Mwst bei Mandanten wenn nicht Vorsteuerabzug berechtigt
-        
-    Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
-    VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
-    
-    {
-      "GEGNER_Nachname":"",
-      "KENNZEICHEN_GEGNER":"",
-      "MANDANT_NACHNAME": "",
-      "MANDANT_VORNAME": "",
-      "MANDANT_STRASSE": "",
-      "MANDANT_PLZ_ORT": "",
-    
-      "UNFALL_DATUM": "",
-      "UNFALL_ORT": "",
-      "UNFALL_STRASSE": "",
-    
-      "AKTENZEICHEN": "",
-      "FAHRZEUGTYP": "",
-      "KENNZEICHEN": "",
-      "VORSTEUERBERECHTIGUNG": "",
-    
-      "SCHADENHERGANG": "",
-      "SCHADENSNUMMER": "",
-    
-      "VERSICHERUNG": "",
-      "VER_STRASSE": "",
-      "VER_ORT": "",
-    
-      "WERTMINDERUNG": "",
-      "REPARATURKOSTEN": "",
-      "KOSTENPAUSCHALE": "25,00 €",
-      "GUTACHTERKOSTEN": "",
-      "SONSTIGE": "" "
-    
-     }
 
-}
-""",
     "Totalschaden (konkret)": """Gib NUR JSON zurück (keine Erklärungen).
-    „VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
-     Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
-     Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
+VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
+Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
+Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
+
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
@@ -173,12 +126,16 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "ZUSATZKOSTEN_BETRAG": ""
 }
 """,
+
     "Konkret unter WBW": """Gib NUR JSON zurück (keine Erklärungen).
-    „VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
-     Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
-     -Mehrwertsteuer = 0 wenn Fiktive Rechnung
-     -Nutzungsausfall = 0 wenn Fiktive rechnung
-     Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
+VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
+Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
+
+-Mehrwertsteuer = 0 wenn Fiktive Rechnung
+-Nutzungsausfall = 0 wenn Fiktive Rechnung
+
+Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
+
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
@@ -214,10 +171,13 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "ZUSATZKOSTEN_BETRAG": ""
 }
 """,
+
     "Totalschaden (fiktiv)": """Gib NUR JSON zurück (keine Erklärungen).
-    „VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
-     Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
-     Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
+VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
+Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
+
+Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
+
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
@@ -253,42 +213,44 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "ZUSATZKOSTEN_BETRAG": ""
 }
 """,
+
     "Schreiben Totalschaden": """Gib NUR JSON zurück (keine Erklärungen).
-    „VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
-     Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
-     
-     Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
+VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
+Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
+
+Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
+
 Unbekannt -> "".
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
-    {
-     "GEGNER_Nachname":"",
-      "KENNZEICHEN_GEGNER":"",
-      "MANDANT_NACHNAME": "",
-      "MANDANT_VORNAME": "",
-      "MANDANT_STRASSE": "",
-      "MANDANT_PLZ_ORT": "",
-    
-      "UNFALL_DATUM": "",
-      "UNFALL_ORT": "",
-      "UNFALL_STRASSE": "",
-    
-      "AKTENZEICHEN": "",
-      "FAHRZEUGTYP": "",
-      "KENNZEICHEN": "",
-      "VORSTEUERBERECHTIGUNG": "",
-    
-      "SCHADENHERGANG": "",
-      "SCHADENSNUMMER": "",
-    
-      "VERSICHERUNG": "",
-      "VER_STRASSE": "",
-      "VER_ORT": "",
-    
-      "WIEDERBESCHAFFUNGSWERTAUFWAND": ""
-    }
-    """,
-   }
+{
+ "GEGNER_Nachname":"",
+  "KENNZEICHEN_GEGNER":"",
+  "MANDANT_NACHNAME": "",
+  "MANDANT_VORNAME": "",
+  "MANDANT_STRASSE": "",
+  "MANDANT_PLZ_ORT": "",
+
+  "UNFALL_DATUM": "",
+  "UNFALL_ORT": "",
+  "UNFALL_STRASSE": "",
+
+  "AKTENZEICHEN": "",
+  "FAHRZEUGTYP": "",
+  "KENNZEICHEN": "",
+  "VORSTEUERBERECHTIGUNG": "",
+
+  "SCHADENHERGANG": "",
+  "SCHADENSNUMMER": "",
+
+  "VERSICHERUNG": "",
+  "VER_STRASSE": "",
+  "VER_ORT": "",
+
+  "WIEDERBESCHAFFUNGSWERTAUFWAND": ""
+}
+"""
+}
 
 
 # -----------------------------
