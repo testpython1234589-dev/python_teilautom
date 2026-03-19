@@ -50,7 +50,8 @@ VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vol
 -Reparaturkosten= Schadenhöhe(Netto wert ohne Mwst.) bzw. (=Reparaturkosten + Wertminderung - Werterhöhung)
 -Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung 
 -Sachverständigerkosten: Gutachterkosten + Mwst bei Mandanten wenn nicht Vorsteuerabzug berechtigt
-
+-wenn wertminderung/besserung, nicht vorhanden lösche die Zeile/-n
+-GENDEREN feld: je nachdem Frau:ihrer, Mann:seiner
 Unbekannt -> "". Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
 
@@ -222,7 +223,7 @@ Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung
 -BEACHTE: WIEDERBESCHAFFUNGSWERTAUFWAND = (Wiederbeschaffungswert - Restwert)
 -Falls Keine Abmelde/-Ummeldekosten (MELDEKOSTEN) vorhanden sind so ist : 0,00 € (zu kennzeichnen)
 -Falls Zusätzliche kosten Vorhanden (ZUSATZKOSTEN_Bezeichnung/_-Betrag) sind so nehmen leerstelle mit bezeichnung: Name, und Betrag:geld betrag (Unter Sonderkosten!, Keine Dopplung!->Z:B Abmelde-/Ummeldekosten, BEACHTE es gibt 3 Positionen falls nicht sonderkostenauffalen lasse Position frei!)
-
+-GENDEREN feld: je nachdem Frau:ihrer, Mann:seiner
 Mandanten Name mit Herr oder Frau siehe Gutachten (meist 1. Seite)
 
 Unbekannt -> "".
@@ -251,8 +252,9 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "VERSICHERUNG": "",
   "VER_STRASSE": "",
   "VER_ORT": "",
+  "GENDERN":"";
 
-  "WIEDERBESCHAFFUNGSWERTAUFWAND": "";
+  "WIEDERBESCHAFFUNGSWERTAUFWAND": "",
   "KOSTENPAUSCHALE": "25,00 €",
   "GUTACHTERKOSTEN":"",
   "MELDUNGSKOSTEN":"",
