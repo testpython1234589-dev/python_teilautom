@@ -489,15 +489,14 @@ def compute_kostensumme(main_json: Dict[str, Any], ctx: Dict[str, Any]) -> str:
 
         already_counted.add(canonical)
 
-        # 🔥 HIER DIE LOGIK
-        if key == "WERTBESSERUNG_BETRAG":
-            total -= parsed   # ➖ wird abgezogen
+        # 🔥 FIX
+        if key in {"WERTBESSERUNG_BETRAG", "WERTBESSERUNG"}:
+            total -= parsed
         else:
-            total += parsed   # ➕ alles andere wird addiert
+            total += parsed
 
         found_any = True
 
-    # vorhandene manuelle Summe hat Vorrang
     direct_sum = (
         normalize_text(main_json.get("KOSTENSUMME_X", ""))
         or normalize_text(main_json.get("KOSTENSUMME", ""))
