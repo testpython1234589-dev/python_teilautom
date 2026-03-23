@@ -49,7 +49,7 @@ PROMPTS = {
     -Zum Vornamen entweder Herr bzw Frau je zu geschlechts zuordnung des Vornamens (keine Halluzination logik! z.B. bei GMBH keine frau oder Herr sondern einfach nur Name etc.)
 VERSICHERUNG: Wenn vorhanden, immer die Abkürzung/Kurzbezeichnung statt des vollständigen Namens verwenden, sonst vollen Namen.
 -Reparaturkosten ohne Mwst.
--Gendern2 leerstelle : Männlich: meines Mandants, Weiblich: meiner Mandantin
+-Gendern2 leerstelle : Männlich: meines Mandanten, Weiblich: meiner Mandantin
 -Beachte wenn Schadensnumnmer nicht vorhanden Schadensnummer=Versicherungsnummer
 -Zum Fahrzeugtyp einfach nur Name und Modellbezeichnung (Keine lang bezeichnung)
 -Sachverständigerkosten: Gutachterkosten + Mwst bei Mandanten wenn nicht Vorsteuerabzug berechtigt
