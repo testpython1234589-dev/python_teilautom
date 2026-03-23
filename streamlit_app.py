@@ -80,6 +80,7 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "VER_STRASSE": "",
   "VER_ORT": "",
   "GENDERN":"",
+  "GENDERN2":"",
 
   "WERTMINDERUNG": "",
   "REPARATURKOSTEN": "",
@@ -131,7 +132,8 @@ VORSTEUERBERECHTIGUNG: JA -> "" (leer), NEIN -> "nicht".
   "VERSICHERUNG": "",
   "VER_STRASSE": "",
   "VER_ORT": "",
-  "GENDERN":"";
+  "GENDERN":"",
+  "GENDERN2":"",
 
   "WIEDERBESCHAFFUNGSWERTAUFWAND": "",
   "KOSTENPAUSCHALE": "25,00 €",
