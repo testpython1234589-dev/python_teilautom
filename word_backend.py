@@ -70,8 +70,8 @@ def render_word(tpl_name: str, context: Dict[str, Any], out_prefix: str) -> Path
     tpl.render(context)
 
     nachname = safe_filename(str(context.get("MANDANT_NACHNAME", "Unbekannt")))
-    timestamp = datetime.now().strftime("%d-%m-%Y_%H%M%S")
-    out_name = f"{"01-AS_an_VR_23-03-26"}_{timestamp}.docx"
+    timestamp = datetime.now().strftime("%d-%m-%Y)
+    out_name = f"{"01-AS_an_VR"}_{timestamp}.docx"
     out_path = OUTPUT_DIR / out_name
 
     tpl.save(str(out_path))
